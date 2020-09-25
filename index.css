@@ -1,0 +1,18 @@
+/* html, body { height: 100%; }
+.body-container { height: 100%; }
+.row { height: 100%; } */
+
+.col-1 {
+  padding-left: 0px;
+  padding-right: 0px;
+  background: dimgrey;
+  border: 2px solid cadetblue;
+  overflow: hidden;
+  margin-bottom: -99999px;
+  padding-bottom: 99999px;
+}
+
+.col {
+  border: 2px solid yellowgreen;
+  text-align: center;
+}
