@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en"">
   <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -9,16 +9,40 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     <link rel="stylesheet" href="./index.css">
 
-    <title>Hello, world!</title>
+    <title>Pokeiron</title>
   </head>
   <body>
-    <div class="container-fluid body-container">
-      <div class="row">
-        <div class="col-1">
-          <h1>col-1</h1>          
+    <div class="container-fluid body-container d-flex flex-column">
+        <nav class="navbar navbar-dark bg-dark">
+          <img src="./images/pokeiron.png" class="navbar-brand mr-auto ml-auto logo-img"></img>
+        </nav>
+      <div class="row flex-grow-1">
+        <div class="col-2 text-change">
+          <img class="poke-images" src="./images/current-location.png">
+          <!-- <img class="poke-images" src="./images/location.png"> -->
+          <p>Viridian Forest</p>
+          <img class="poke-images" src="./images/inventory.png">
+          <ul>
+            <li>HP-UP</li>
+            <li>Poke-ball x2</li>
+          </ul>
+          <img class="poke-images" src="./images/pokemon2.png">
+          <ul>
+            <li>Pikachu</li>
+            <li>Bulbasaur</li>
+          </ul>
         </div>
-        <div class="col">
-          <h1>col-2</h1>
+        <div class="col text-change">
+          <img id="location-img" src="./images/locations/FL_Viridian_Forest.png">
+          <div id="message">
+            <p>Message content Message content Message content Message content Message content Message content Message content Message content Message content Message content Message content Message content Message content Message content Message content</p>
+          </div>
+        </div>
+        <div class="col-2 text-change">
+          <img class="poke-images" src="./images/scoreboard.png">
+          <ul>
+            <li>Name - 20</li>
+          </ul>
         </div>
       </div>
     </div>
