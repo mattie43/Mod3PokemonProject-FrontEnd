@@ -59,6 +59,7 @@ ul {
 #location-img {
   border: 2px solid var(--pokemon-yellow);
   width: 95%;
+  max-height: 50vh;
 }
 #message {
   border: 2px solid var(--pokemon-yellow);
@@ -72,6 +73,9 @@ ul {
 .pokemon-sprites {
   height: 40vh; 
   margin: -50px -20px -50px -20px;
+}
+.pokemon-sprites:hover {
+  cursor: pointer;
 }
 
 .btn-primary {
@@ -87,4 +91,11 @@ ul {
 
 .inventory-sprite {
   height: 3vh;
+}
+
+#username {
+  border: 2px solid var(--pokemon-blue);
+}
+#username:focus {
+  border: 2px solid var(--pokemon-yellow);
 }
