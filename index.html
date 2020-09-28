@@ -14,37 +14,36 @@
   <body>
     <div class="container-fluid body-container d-flex flex-column">
         <nav class="navbar navbar-dark bg-dark">
-          <img src="./images/pokeiron.png" class="navbar-brand mr-auto ml-auto logo-img"></img>
+          <img src="./images/words/pokeiron.png" class="navbar-brand mr-auto ml-auto logo-img"></img>
         </nav>
-      <div class="row flex-grow-1">
-        <div class="col-2 text-change">
-          <img class="poke-images" src="./images/current-location.png">
-          <!-- <img class="poke-images" src="./images/location.png"> -->
-          <p>Viridian Forest</p>
-          <img class="poke-images" src="./images/inventory.png">
-          <ul>
-            <li>HP-UP</li>
-            <li>Poke-ball x2</li>
-          </ul>
-          <img class="poke-images" src="./images/pokemon2.png">
-          <ul>
-            <li>Pikachu</li>
-            <li>Bulbasaur</li>
-          </ul>
-        </div>
-        <div class="col text-change">
-          <img id="location-img" src="./images/locations/FL_Viridian_Forest.png">
-          <div id="message">
-            <p>Message content Message content Message content Message content Message content Message content Message content Message content Message content Message content Message content Message content Message content Message content Message content</p>
+
+        <div class="row flex-fill">
+          <div class="col-2 text-change left-column">
+            <img id="poke-images" src="./images/words/current-location.png">
+            <p id="location-p">Log in first!</p>
+            <img id="poke-images" src="./images/words/inventory.png">
+            <ul id="inventory-ul">
+            </ul>
+            <img id="poke-images" src="./images/words/pokemon2.png">
+            <ul id="pokemon-ul">
+            </ul>
+          </div>
+          <div class="col center-column">
+            <form class="login-form">
+              <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="username" class="form-control" id="username">
+              </div>
+              <button type="submit" class="btn btn-primary btn-lg">Login</button>
+            </form>
+          </div>
+          <div class="col-2 text-change">
+            <img id="poke-images" src="./images/words/scoreboard.png">
+            <ul>
+              <li>Name - 20</li>
+            </ul>
           </div>
         </div>
-        <div class="col-2 text-change">
-          <img class="poke-images" src="./images/scoreboard.png">
-          <ul>
-            <li>Name - 20</li>
-          </ul>
-        </div>
-      </div>
     </div>
 
 
@@ -57,3 +56,4 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script> -->
   </body>
 </html>
+

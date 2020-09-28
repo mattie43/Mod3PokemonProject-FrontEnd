@@ -1,26 +1,18 @@
-/* html, body { height: 100%; }
-.body-container { height: 100%; }
-.row { height: 100%; } */
-
-@font-face {
-  font-family: pokemonFont;
-  src: url(./font/PokemonWoff.woff);
+:root {
+  --pokemon-blue: #356abc;
+  --pokemon-yellow: #fbcb04;
 }
 
 body {
-  background-color: #2a75bb;
+  background-color: var(--pokemon-blue);
 }
-
 
 .col-2 {
   text-align: center;
   color: white;
   margin: 10px;
   background: #565c63;
-  border: 2px solid #ffcb05;
-  /* overflow: hidden; */
-  /* margin-bottom: -99999px;
-  padding-bottom: 99999px; */
+  border: 2px solid var(--pokemon-yellow);
   margin-top: 100px;
   margin-bottom: 100px;
 }
@@ -30,10 +22,7 @@ body {
   color: white;
   margin: 10px;
   background: #565c63;
-  border: 2px solid #ffcb05;
-  /* overflow: hidden; */
-  /* margin-bottom: -99999px; */
-  /* padding-bottom: 99999px; */
+  border: 2px solid var(--pokemon-yellow);
 }
 
 .logo-img {
@@ -41,7 +30,7 @@ body {
 }
 
 .navbar {
-  border-bottom: 2px solid #ffcb05;
+  border-bottom: 2px solid var(--pokemon-yellow);
   margin-left: -15px;
   margin-right: -15px;
 }
@@ -55,24 +44,47 @@ ul {
   min-height: 100vh;
 }
 
-.poke-images {
+#poke-images {
   margin-top: 15px;
   margin-bottom: 15px;
   width: 90%;
 }
 
+.center-column {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
 #location-img {
-  margin-top: 50px;
+  border: 2px solid var(--pokemon-yellow);
   width: 95%;
-  border: 2px solid #ffcb05;
 }
 #message {
-  border: 2px solid #ffcb05;
-  padding-top: 10px;
-  margin: auto;
-  margin-top: 70px;  width: 95%;
-}
-.text-change {
-  /* color: white; */
+  border: 2px solid var(--pokemon-yellow);
+  padding: 15px;
+  width: 95%;
   font-size: 25px;
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+.pokemon-sprites {
+  height: 40vh; 
+  margin: -50px -20px -50px -20px;
+}
+
+.btn-primary {
+  border-width: 2px;
+  background-color: var(--pokemon-blue);
+  border-color: var(--pokemon-blue);
+}
+
+.btn-primary:hover {
+  background-color: #3a71c7;
+  border-color: var(--pokemon-yellow);
+}
+
+.inventory-sprite {
+  height: 3vh;
 }
