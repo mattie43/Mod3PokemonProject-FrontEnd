@@ -103,11 +103,15 @@ ul {
 #rename-form {
   position: absolute;
   /* top: 40vh; */
-  bottom: 15vh;
+  bottom: 18vh;
   width: 20vh;
   height: 20vh;
   overflow: hidden;
   transition: all 1s;
+
+  background-color: #565c63;
+  padding: 5px;
+  border: 2px solid var(--pokemon-yellow);
 }
 #rename-form.close {
   top: 100%;
@@ -115,12 +119,16 @@ ul {
 }
 #starter-form {
   position: absolute;
-  /* top: 40vh; */
-  bottom: 10vh;
+  top: 26vh;
+  /* bottom: 50vh; */
   width: 20vh;
-  height: 20vh;
+  height: 17vh;
   overflow: hidden;
   transition: all 1s;
+
+  background-color: #565c63;
+  padding: 5px;
+  border: 2px solid var(--pokemon-yellow);
 }
 #starter-form.close {
   top: 100%;
