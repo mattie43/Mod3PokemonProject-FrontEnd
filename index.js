@@ -15,7 +15,7 @@ document.addEventListener('keydown', e => {
 })
 
 leftColumn.addEventListener('click', e => {
-  if(e.target.id = 'hpup-li'){
+  if(e.target.id == 'hpup-li'){
     removeHpUp()
   }
 })
@@ -25,8 +25,12 @@ centerColumn.addEventListener('submit', e => {
   
   if(e.target.className == 'login-form'){
     // fetch user, show them the starting page/choose pokemon - e.target.username.value
-    userLogin(e.target.username.value)
-    chooseStartingPokemon()
+    if(nameExists(e.target.username.value)){
+      userLogin(e.target.username.value)
+      showCurrentLocation()
+    }else{
+      chooseStartingPokemon()
+    }
   }else if(e.target.id == 'starter-form'){
     newPlayerStart()
     postPokemon(e.target.name.value, e.target.dataset.species, e.target.dataset.id, logoImg.dataset.currentUser)
@@ -67,7 +71,7 @@ function newPlayerStart() {
   pokeBallLi.innerHTML = `<img src="./images/inventory/poke-ball.png" class="inventory-sprite"> Poké Ball <span id="pokeball-amount">x1</span>`
   leftColumn.querySelector('#inventory-ul').append(pokeBallLi)
 
-  hpUpLi.id = 'hpup-li'
+  // hpUpLi.id = 'hpup-li'
   hpUpLi.innerHTML = `<img src="./images/inventory/hp-up.png" class="inventory-sprite"> HP-UP <span id="hpup-amount">x1</span>`
   leftColumn.querySelector('#inventory-ul').append(hpUpLi)
 }
@@ -107,7 +111,8 @@ function foundItem() {
 function addPokemon(pokemonName, pokemonSpecies, pokemonId) {
   if(leftColumn.querySelector('#pokeball-amount').innerText.slice(1) == 0){return}
   const pokeLi = document.createElement('li')
-  pokeLi.innerText = `${pokemonName} - ${pokemonSpecies}`
+  const capitalSpecies = pokemonSpecies.charAt(0).toUpperCase() + pokemonSpecies.slice(1)
+  pokeLi.innerText = `${pokemonName} - ${capitalSpecies}`
   pokeLi.dataset.species = pokemonSpecies
   pokeLi.dataset.id = pokemonId
   leftColumn.querySelector('#pokemon-ul').append(pokeLi)  
@@ -132,10 +137,15 @@ function addHeal(currentHP) {
   }
 }
 
-const renderItem = (item) => {
+const renderItem = (itemCount) => {
   const itemLi = document.createElement('li')
+  itemLi.innerText = `<img src="./images/inventory/hp-up.png" class="inventory-sprite"> HP-UP <span id="hpup-amount">x${itemCount}</span>`
   document.getElementById('inventory-ul').append(itemLi)
-  itemLi
+}
+
+const renderOldUser = (user) => {  
+  leftColumn.querySelector('#hp-p').innerText = user.current_hp
+  document.querySelector('.logo-img').dataset.currentUser = user.id
 }
 
 // Center Column Functions -------------------------------------------------------------------------------------------------------------------------------------------------
@@ -183,30 +193,6 @@ function chooseStartingPokemon() {
     <p id="message">Please select your starting Pokemon!</p>
     `
   createRenameForm('starter')
-}
-
-function newPlayerStart() {
-  const locationP = leftColumn.querySelector('#location-p')
-  locationP.innerText = 'Pallet Town Center' // set last location name
-  locationP.dataset.location = 13 // set last locaiton id
-  centerColumn.innerHTML = `
-    <img id="location-img" src="./images/locations/img_13.png">
-    <p id="message">Welcome to Pallet Town! Use your arrow keys to move around. You can search for Pokémon to collect, but first you need to find some Poké Balls! Professor Oak has given you one to start with. He also said it's dangerous out there, so take an HP-UP as well!</p>
-    `
-
-  const pokeBallLi = document.createElement('li')
-  const hpUpLi = document.createElement('li')
-
-  // get user hp, item, and pokemon count/names
-  leftColumn.querySelector('#hp-p').innerText = 100 
-
-  pokeBallLi.id = 'pokeball-li'
-  pokeBallLi.innerHTML = `<img src="./images/inventory/poke-ball.png" class="inventory-sprite"> Poké Ball <span id="pokeball-amount">x1</span>`
-  leftColumn.querySelector('#inventory-ul').append(pokeBallLi)
-
-  hpUpLi.id = 'hpup-li'
-  hpUpLi.innerHTML = `<img src="./images/inventory/hp-up.png" class="inventory-sprite"> HP-UP <span id="hpup-amount">x1</span>`
-  leftColumn.querySelector('#inventory-ul').append(hpUpLi)
 }
 
 function showCurrentLocation() {
@@ -280,14 +266,23 @@ function pokemonEncounter(pokemon) {
 
 // Right Column Functions -------------------------------------------------------------------------------------------------------------------------------------------------
 
-const renderUser = (user) => {
+const renderNewUser = (user) => {
   const userLi = document.createElement("li")
   document.querySelector('.logo-img').dataset.currentUser = user.id
   userLi.id = user.id
+  userLi.dataset.name = user.name
   userLi.dataset.maxHp = user.max_hp
   userLi.dataset.currentHp = user.current_hp
   userLi.textContent = `${user.name}`
   scoreboard.append(userLi)
+}
+
+function nameExists(username) {
+  const nameList = scoreboard.querySelectorAll('li')
+  for (const name of nameList) {
+    if(name.dataset.name == username){return true}
+  }
+  return false
 }
 
 // Fetch requests ---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -343,7 +338,7 @@ const userLogin = (name) => {
 
   fetch(baseurl+`users`, options)
   .then(resp => resp.json())
-  .then(user => renderUser(user))
+  .then(user => renderOldUser(user))
 }
 
 const getUsers = () => {
@@ -351,7 +346,7 @@ const getUsers = () => {
   .then(resp => resp.json())
   .then(users => {
     users.forEach(user => {
-      renderUser(user)
+      renderNewUser(user)
     });
   })
 }

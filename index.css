@@ -146,15 +146,16 @@ ul {
   border: 2px solid var(--pokemon-yellow);
 }
 #starter-form.close {
-  top: 100%;
+  top: 90%;
   height: 0;
+  z-index: -1;
 }
 
 #scoreboard-ol {
   overflow: auto;
   max-height: 57vh;
 }
-#pokemon-ul {
+/* #pokemon-ul {
   overflow: auto;
   max-height: 30vh;
-}
+} */
