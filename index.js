@@ -1,7 +1,6 @@
 const centerColumn = document.querySelector('.center-column')
 const leftColumn = document.querySelector('.left-column')
 
-
 // Global Functions
 
 document.addEventListener('keydown', e => {
@@ -240,6 +239,8 @@ function pokemonEncounter(pokemon) {
 
   createRenameForm()
 }
+
+// Right Column Functions
 
 // Fetch requests
 
