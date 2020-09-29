@@ -1,7 +1,22 @@
 const centerColumn = document.querySelector('.center-column')
 const leftColumn = document.querySelector('.left-column')
+const scoreBoard = document.querySelector('.score-board')
+const baseurl =   "http://localhost:3000/"
+// Helper functions------------------------------------------------
 
+const capitalize = (string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
+const arrayFromHTMLcollection = (HTMLcoll) => {
+  new_array = []
+  for (const e of HTMLcoll) {
+    new_array.push((e.innerHTML).toLowerCase())
+  }
+  return new_array
+}
+
+//-----------------------------------------------------------------
 centerColumn.addEventListener('submit', e => {
   e.preventDefault()
   
@@ -11,9 +26,9 @@ centerColumn.addEventListener('submit', e => {
     chooseStartingPokemon()
   }else if(e.target.id == 'starter-form'){
     newPlayerStart()
-    getPokemon(e.targe.name.value, e.target.dataset.species, e.target.dataset.id)
+    getPokemon(e.target.name.value, e.target.dataset.species, e.target.dataset.id, 1)
   }else if(e.target.id == 'rename-form'){
-    getPokemon(e.targe.name.value, e.target.dataset.species, e.target.dataset.id)
+    getPokemon(e.targe.name.value, e.target.dataset.species, e.target.dataset.id, 1)
     showCurrentLocation()
     e.target.remove()
   }
@@ -29,7 +44,7 @@ centerColumn.addEventListener('click', e => {
 })
 
 leftColumn.addEventListener('click', e => {
-  if(e.target.id = 'hpup-li'){
+  if(e.target.id === 'hpup-li'){
     removeHpUp()
   }
 })
@@ -42,22 +57,20 @@ document.addEventListener('keydown', e => {
 
 // (ISA)Fetch Requests --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-const scoreBoard = document.querySelector('.score-board')
-const baseurl =   "http://localhost:3000/"
+
 
 const getItem = (itemName, userId) => {
-  baseurl = "http://localhost:3000/items/"
   let options = {
       method: "POST",
       headers: {"content-type": "application/json",
                 "accept": "applicatio/json" },
-      body: JSON.stringify({name: itemName,
+      body: JSON.stringify({api_id: itemName,
             user_id: userId})
       }
 
-    fetch(baseurl, options)
+    fetch(baseurl + `items`, options)
     .then(resp => resp.json())
-    .then(item => item)
+    .then(item => renderItem(item))
 }
 
 const getPokemon = (name, species, pokeId, userId) => {
@@ -76,7 +89,7 @@ const getPokemon = (name, species, pokeId, userId) => {
 
   fetch(baseurl + `pokemons/`, options)
   .then(resp => resp.json())
-  .then(pokemon => addPokemon(pokemon.name, pokemon.species, pokeId))
+  .then(pokemon => addPokemon(pokemon, pokeId))
 }
 
 const userLogin = (name) => {
@@ -89,6 +102,10 @@ const userLogin = (name) => {
     body: JSON.stringify({name: name,
           })
   }
+
+  // olTag = scoreBoard.querySelector("ol")
+  // allUsers = arrayFromHTMLcollection(olTag.children)
+  // if(allUsers.includes(toLowerCase(name)))
 
   fetch(baseurl+`users`, options)
   .then(resp => resp.json())
@@ -121,7 +138,8 @@ const renderUser = (user) => {
 const renderItem = (item) => {
   const itemLi = document.createElement('li')
   document.getElementById('inventory-ul').append(itemLi)
-  itemLi
+  itemLi.id = item.api_id
+  itemLi.innerHTML = `<img src="${item.img_url}" class="inventory-sprite"> ${item.name} <span id="pokeball-amount">x${item.amount}</span>`
 }
 
 // ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -149,9 +167,9 @@ function createRenameForm(starter) {
   form.innerHTML = `
     <div class="form-group">
       <label id="rename-label" for="name"></label>
-      <input type="name" class="form-control" id="name">
+      <input type="name" class="form-control" id="name" >
     </div>
-    <button type="submit" class="btn btn-primary btn-md">Submit</button>
+    <button type="submit" class="btn btn-primary btn-md" value="Submit">Submit</button>
     `
   centerColumn.insertBefore(form, centerColumn.lastElementChild)
 }
@@ -188,23 +206,18 @@ function newPlayerStart() {
   // get user hp, item, and pokemon count/names
   leftColumn.querySelector('#hp-p').innerText = 100
 
- 
+  getItem("master-ball", 1);
+  getItem("potion", 1);
 
-  pokeBallLi.id = 'pokeball-li'
-  pokeBallLi.innerHTML = `<img src="./images/inventory/poke-ball.png" class="inventory-sprite"> Poké Ball <span id="pokeball-amount">x1</span>`
-  leftColumn.querySelector('#inventory-ul').append(pokeBallLi)
 
-  hpUpLi.id = 'hpup-li'
-  hpUpLi.innerHTML = `<img src="./images/inventory/hp-up.png" class="inventory-sprite"> HP-UP <span id="hpup-amount">x1</span>`
-  leftColumn.querySelector('#inventory-ul').append(hpUpLi)
 }
 
-function addPokemon(pokemonName, pokemonSpecies, pokemonId) {
-  if(leftColumn.querySelector('#pokeball-amount').innerText.slice(1) == 0){return}
+function addPokemon(pokemon, pokeId) {
+  // if(leftColumn.querySelector('#').innerText.slice(1) == 0){return}
   const pokeLi = document.createElement('li')
-  pokeLi.innerText = `${pokemonName} - ${pokemonSpecies}`
-  pokeLi.dataset.species = pokemonSpecies
-  pokeLi.dataset.id = pokemonId
+  pokeLi.innerHTML = `${capitalize(pokemon.name)} | ${capitalize(pokemon.species)} <img src="${pokemon.img_url}"/>`
+  pokeLi.dataset.species = pokemon.species
+  pokeLi.dataset.id = pokeId
   leftColumn.querySelector('#pokemon-ul').append(pokeLi)  
 }
 
