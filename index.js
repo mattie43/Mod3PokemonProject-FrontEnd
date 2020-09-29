@@ -1,6 +1,107 @@
 const centerColumn = document.querySelector('.center-column')
 const leftColumn = document.querySelector('.left-column')
 
+
+// Global Functions
+
+document.addEventListener('keydown', e => {
+  if(leftColumn.innerText != 'Log in first!' && e.key.slice(0, 5) == 'Arrow'){
+    moveLocation(e.key.slice(5))
+  }
+})
+
+function newPlayerStart() {
+  const locationP = leftColumn.querySelector('#location-p')
+  locationP.innerText = 'Pallet Town Center' // set last location name
+  locationP.dataset.location = 13 // set last locaiton id
+  centerColumn.innerHTML = `
+    <img id="location-img" src="./images/locations/img_13.png">
+    <p id="message">Welcome to Pallet Town! Use your arrow keys to move around. You can search for Pokémon to collect, but first you need to find some Poké Balls! Professor Oak has given you one to start with. He also said it's dangerous out there, so take an HP-UP as well!</p>
+    `
+
+  const pokeBallLi = document.createElement('li')
+  const hpUpLi = document.createElement('li')
+
+  // get user hp, item, and pokemon count/names
+  leftColumn.querySelector('#hp-p').innerText = 100
+
+  pokeBallLi.id = 'pokeball-li'
+  pokeBallLi.innerHTML = `<img src="./images/inventory/poke-ball.png" class="inventory-sprite"> Poké Ball <span id="pokeball-amount">x1</span>`
+  leftColumn.querySelector('#inventory-ul').append(pokeBallLi)
+
+  hpUpLi.id = 'hpup-li'
+  hpUpLi.innerHTML = `<img src="./images/inventory/hp-up.png" class="inventory-sprite"> HP-UP <span id="hpup-amount">x1</span>`
+  leftColumn.querySelector('#inventory-ul').append(hpUpLi)
+}
+
+function removeHpUp() {
+  const hpupAmount = leftColumn.querySelector('#hpup-amount').innerText.slice(1)
+  const currentHP = parseInt(leftColumn.querySelector('#hp-p').innerText)
+  if(hpupAmount == 0){
+    centerColumn.querySelector('#message').innerText = `Try getting more HP-UP first!`
+  }else if(currentHP == 100){
+    centerColumn.querySelector('#message').innerText = `You're already at full health!`
+  }else{
+    centerColumn.querySelector('#message').innerText = `You successfully healed 20 HP!`
+    // update HP in database
+    leftColumn.querySelector('#hpup-amount').innerText = 'x' + (parseInt(hpupAmount) - 1)
+    addHeal(currentHP)
+  }
+}
+
+function foundItem() {
+  const num = Math.floor(Math.random()*2)+1
+  if(num == 1){
+    centerColumn.querySelector('#message').innerText = "You found a Poké Ball! Let's add it to your inventory!"
+    const currentAmount = leftColumn.querySelector('#pokeball-amount').innerText.slice(1)
+    // update inventory in database
+    leftColumn.querySelector('#pokeball-amount').innerText = 'x' + (parseInt(currentAmount) + 1)
+  }else{
+    centerColumn.querySelector('#message').innerText = "You found a HP-UP! Let's add it to your inventory!"
+    const currentAmount = leftColumn.querySelector('#hpup-amount').innerText.slice(1)
+    // update inventory in database
+    leftColumn.querySelector('#hpup-amount').innerText = 'x' + (parseInt(currentAmount) + 1)
+  }
+}
+
+// Left Column Functions
+
+leftColumn.addEventListener('click', e => {
+  if(e.target.id = 'hpup-li'){
+    removeHpUp()
+  }
+})
+
+function addPokemon(pokemonName, pokemonSpecies, pokemonId) {
+  if(leftColumn.querySelector('#pokeball-amount').innerText.slice(1) == 0){return}
+  const pokeLi = document.createElement('li')
+  pokeLi.innerText = `${pokemonName} - ${pokemonSpecies}`
+  pokeLi.dataset.species = pokemonSpecies
+  pokeLi.dataset.id = pokemonId
+  leftColumn.querySelector('#pokemon-ul').append(pokeLi)  
+}
+
+function removePokeBall(pokemonSpecies) {  
+  const currentAmount = leftColumn.querySelector('#pokeball-amount').innerText.slice(1)
+  if(currentAmount == 0){
+    centerColumn.querySelector('#message').innerText = `Try getting more Poké Balls first! And ${pokemonSpecies} ran away!`
+    return
+  }
+  centerColumn.querySelector('#message').innerText = `You successfully caught ${pokemonSpecies}!`
+  // update inventory in database
+  leftColumn.querySelector('#pokeball-amount').innerText = 'x' + (parseInt(currentAmount) - 1)
+}
+
+function addHeal(currentHP) {
+  if(currentHP + 20 > 100){
+    leftColumn.querySelector('#hp-p').innerText = 100
+  }else{
+    leftColumn.querySelector('#hp-p').innerText = currentHP + 20
+  }
+}
+
+// Center Column Functions
+
 centerColumn.addEventListener('submit', e => {
   e.preventDefault()
   
@@ -23,18 +124,6 @@ centerColumn.addEventListener('click', e => {
   }else if(e.target.dataset.species){
     removePokeBall(e.target.dataset.species)
     showRenameForm(e.target.dataset.species, e.target.dataset.id)
-  }
-})
-
-leftColumn.addEventListener('click', e => {
-  if(e.target.id = 'hpup-li'){
-    removeHpUp()
-  }
-})
-
-document.addEventListener('keydown', e => {
-  if(leftColumn.innerText != 'Log in first!' && e.key.slice(0, 5) == 'Arrow'){
-    moveLocation(e.key.slice(5))
   }
 })
 
@@ -83,80 +172,12 @@ function chooseStartingPokemon() {
   createRenameForm('starter')
 }
 
-function newPlayerStart() {
-  const locationP = leftColumn.querySelector('#location-p')
-  locationP.innerText = 'Pallet Town Center' // set last location name
-  locationP.dataset.location = 13 // set last locaiton id
-  centerColumn.innerHTML = `
-    <img id="location-img" src="./images/locations/img_13.png">
-    <p id="message">Welcome to Pallet Town! Use your arrow keys to move around. You can search for Pokémon to collect, but first you need to find some Poké Balls! Professor Oak has given you one to start with. He also said it's dangerous out there, so take an HP-UP as well!</p>
-    `
-
-  const pokeBallLi = document.createElement('li')
-  const hpUpLi = document.createElement('li')
-
-  // get user hp, item, and pokemon count/names
-  leftColumn.querySelector('#hp-p').innerText = 100
-
-  pokeBallLi.id = 'pokeball-li'
-  pokeBallLi.innerHTML = `<img src="./images/inventory/poke-ball.png" class="inventory-sprite"> Poké Ball <span id="pokeball-amount">x1</span>`
-  leftColumn.querySelector('#inventory-ul').append(pokeBallLi)
-
-  hpUpLi.id = 'hpup-li'
-  hpUpLi.innerHTML = `<img src="./images/inventory/hp-up.png" class="inventory-sprite"> HP-UP <span id="hpup-amount">x1</span>`
-  leftColumn.querySelector('#inventory-ul').append(hpUpLi)
-}
-
-function addPokemon(pokemonName, pokemonSpecies, pokemonId) {
-  if(leftColumn.querySelector('#pokeball-amount').innerText.slice(1) == 0){return}
-  const pokeLi = document.createElement('li')
-  pokeLi.innerText = `${pokemonName} - ${pokemonSpecies}`
-  pokeLi.dataset.species = pokemonSpecies
-  pokeLi.dataset.id = pokemonId
-  leftColumn.querySelector('#pokemon-ul').append(pokeLi)  
-}
-
-function removePokeBall(pokemonSpecies) {  
-  const currentAmount = leftColumn.querySelector('#pokeball-amount').innerText.slice(1)
-  if(currentAmount == 0){
-    centerColumn.querySelector('#message').innerText = `Try getting more Poké Balls first! And ${pokemonSpecies} ran away!`
-    return
-  }
-  centerColumn.querySelector('#message').innerText = `You successfully caught ${pokemonSpecies}!`
-  // update inventory in database
-  leftColumn.querySelector('#pokeball-amount').innerText = 'x' + (parseInt(currentAmount) - 1)
-}
-
 function showCurrentLocation() {
-
   const locationId = leftColumn.querySelector('#location-p').dataset.location
   const locationImg = centerColumn.querySelector('#location-img')
   locationImg.removeAttribute("data-id")
   locationImg.removeAttribute("data-name")
   locationImg.src = `./images/locations/img_${locationId}.png`
-}
-
-function removeHpUp() {
-  const hpupAmount = leftColumn.querySelector('#hpup-amount').innerText.slice(1)
-  const currentHP = parseInt(leftColumn.querySelector('#hp-p').innerText)
-  if(hpupAmount == 0){
-    centerColumn.querySelector('#message').innerText = `Try getting more HP-UP first!`
-  }else if(currentHP == 100){
-    centerColumn.querySelector('#message').innerText = `You're already at full health!`
-  }else{
-    centerColumn.querySelector('#message').innerText = `You successfully healed 20 HP!`
-    // update HP in database
-    leftColumn.querySelector('#hpup-amount').innerText = 'x' + (parseInt(hpupAmount) - 1)
-    addHeal(currentHP)
-  }
-}
-
-function addHeal(currentHP) {
-  if(currentHP + 20 > 100){
-    leftColumn.querySelector('#hp-p').innerText = 100
-  }else{
-    leftColumn.querySelector('#hp-p').innerText = currentHP + 20
-  }
 }
 
 function moveLocation(direction) {
@@ -208,28 +229,6 @@ function encounterCheck() {
   centerColumn.querySelector('#message').innerText = "You didn't find anything of use here. Try exploring more!"
 }
 
-function foundItem() {
-  const num = Math.floor(Math.random()*2)+1
-  if(num == 1){
-    centerColumn.querySelector('#message').innerText = "You found a Poké Ball! Let's add it to your inventory!"
-    const currentAmount = leftColumn.querySelector('#pokeball-amount').innerText.slice(1)
-    // update inventory in database
-    leftColumn.querySelector('#pokeball-amount').innerText = 'x' + (parseInt(currentAmount) + 1)
-  }else{
-    centerColumn.querySelector('#message').innerText = "You found a HP-UP! Let's add it to your inventory!"
-    const currentAmount = leftColumn.querySelector('#hpup-amount').innerText.slice(1)
-    // update inventory in database
-    leftColumn.querySelector('#hpup-amount').innerText = 'x' + (parseInt(currentAmount) + 1)
-  }
-}
-
-function fetchPokemon() {
-  const num = Math.floor(Math.random()*151)+1  
-  fetch(`https://pokeapi.co/api/v2/pokemon/${num}`)
-    .then(resp => resp.json())
-    .then(data => pokemonEncounter(data))
-}
-
 function pokemonEncounter(pokemon) {
   const capitalName = pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
   centerColumn.querySelector('#message').innerText = `You found ${capitalName}! Click on it to try and capture it, or run away!`
@@ -241,6 +240,17 @@ function pokemonEncounter(pokemon) {
 
   createRenameForm()
 }
+
+// Fetch requests
+
+function fetchPokemon() {
+  const num = Math.floor(Math.random()*151)+1  
+  fetch(`https://pokeapi.co/api/v2/pokemon/${num}`)
+    .then(resp => resp.json())
+    .then(data => pokemonEncounter(data))
+}
+
+// Keeping this on the bottom because it's so long
 
 function validMove(currentLocation, direction) {
   switch(currentLocation) {
