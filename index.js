@@ -1,17 +1,19 @@
 const centerColumn = document.querySelector('.center-column')
 const leftColumn = document.querySelector('.left-column')
 
+
 centerColumn.addEventListener('submit', e => {
   e.preventDefault()
   
   if(e.target.className == 'login-form'){
     // fetch user, show them the starting page/choose pokemon - e.target.username.value
+    userLogin(e.target.username.value)
     chooseStartingPokemon()
   }else if(e.target.id == 'starter-form'){
     newPlayerStart()
-    addPokemon(e.target.name.value, e.target.dataset.species, e.target.dataset.id)
+    getPokemon(e.targe.name.value, e.target.dataset.species, e.target.dataset.id)
   }else if(e.target.id == 'rename-form'){
-    addPokemon(e.target.name.value, e.target.dataset.species, e.target.dataset.id)
+    getPokemon(e.targe.name.value, e.target.dataset.species, e.target.dataset.id)
     showCurrentLocation()
     e.target.remove()
   }
@@ -37,6 +39,92 @@ document.addEventListener('keydown', e => {
     moveLocation(e.key.slice(5))
   }
 })
+
+// (ISA)Fetch Requests --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+const scoreBoard = document.querySelector('.score-board')
+const baseurl =   "http://localhost:3000/"
+
+const getItem = (itemName, userId) => {
+  baseurl = "http://localhost:3000/items/"
+  let options = {
+      method: "POST",
+      headers: {"content-type": "application/json",
+                "accept": "applicatio/json" },
+      body: JSON.stringify({name: itemName,
+            user_id: userId})
+      }
+
+    fetch(baseurl, options)
+    .then(resp => resp.json())
+    .then(item => item)
+}
+
+const getPokemon = (name, species, pokeId, userId) => {
+
+
+  let options = {
+    method: "POST",
+    headers: {"content-type": "application/json",
+              "accept": "application/json"
+    },
+    body: JSON.stringify({name: name,
+          species: species,
+          user_id: userId
+          })
+  }
+
+  fetch(baseurl + `pokemons/`, options)
+  .then(resp => resp.json())
+  .then(pokemon => addPokemon(pokemon.name, pokemon.species, pokeId))
+}
+
+const userLogin = (name) => {
+
+  let options = {
+    method: "POST",
+    headers: {"content-type": "application/json",
+              "accept": "application/json"
+    },
+    body: JSON.stringify({name: name,
+          })
+  }
+
+  fetch(baseurl+`users`, options)
+  .then(resp => resp.json())
+  .then(user => renderUser(user))
+
+}
+
+const getUsers = () => {
+
+  fetch(baseurl+`users`)
+  .then(resp => resp.json())
+  .then(users => {
+    users.forEach(user => {
+      renderUser(user)
+    });
+  })
+
+}
+
+const renderUser = (user) => {
+  const userLi = document.createElement("li")
+  const olTag = scoreBoard.querySelector("ol")
+  userLi.id = user.id
+  userLi.dataset.maxHp = user.max_hp
+  userLi.dataset.currentHp = user.current_hp
+  userLi.textContent = `${user.name}`
+  olTag.append(userLi)
+}
+
+const renderItem = (item) => {
+  const itemLi = document.createElement('li')
+  document.getElementById('inventory-ul').append(itemLi)
+  itemLi
+}
+
+// ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 function showRenameForm(pokemonSpecies, pokemonId) {
   if(centerColumn.querySelector('#starter-form')){
@@ -83,6 +171,8 @@ function chooseStartingPokemon() {
   createRenameForm('starter')
 }
 
+
+
 function newPlayerStart() {
   const locationP = leftColumn.querySelector('#location-p')
   locationP.innerText = 'Pallet Town Center' // set last location name
@@ -97,6 +187,8 @@ function newPlayerStart() {
 
   // get user hp, item, and pokemon count/names
   leftColumn.querySelector('#hp-p').innerText = 100
+
+ 
 
   pokeBallLi.id = 'pokeball-li'
   pokeBallLi.innerHTML = `<img src="./images/inventory/poke-ball.png" class="inventory-sprite"> Poké Ball <span id="pokeball-amount">x1</span>`
@@ -298,3 +390,5 @@ function validMove(currentLocation, direction) {
       return true
   }
 }
+
+getUsers();
