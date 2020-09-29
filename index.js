@@ -1,13 +1,52 @@
+// Global Variables -------------------------------------------------------------------------------------------------------------------------------------------------
+
 const centerColumn = document.querySelector('.center-column')
 const leftColumn = document.querySelector('.left-column')
+const scoreboard = document.querySelector('#scoreboard-ol')
+const logoImg = document.querySelector('.logo-img')
+const baseurl = "http://localhost:3000/"
 
-// Global Functions
+// Event Listeners --------------------------------------------------------------------------------------------------------------------------------------------------
 
 document.addEventListener('keydown', e => {
   if(leftColumn.innerText != 'Log in first!' && e.key.slice(0, 5) == 'Arrow'){
     moveLocation(e.key.slice(5))
   }
 })
+
+leftColumn.addEventListener('click', e => {
+  if(e.target.id = 'hpup-li'){
+    removeHpUp()
+  }
+})
+
+centerColumn.addEventListener('submit', e => {
+  e.preventDefault()
+  
+  if(e.target.className == 'login-form'){
+    // fetch user, show them the starting page/choose pokemon - e.target.username.value
+    userLogin(e.target.username.value)
+    chooseStartingPokemon()
+  }else if(e.target.id == 'starter-form'){
+    newPlayerStart()
+    postPokemon(e.target.name.value, e.target.dataset.species, e.target.dataset.id, logoImg.dataset.currentUser)
+  }else if(e.target.id == 'rename-form'){
+    postPokemon(e.target.name.value, e.target.dataset.species, e.target.dataset.id, logoImg.dataset.currentUser)
+    showCurrentLocation()
+    e.target.remove()
+  }
+})
+
+centerColumn.addEventListener('click', e => {
+  if(e.target.className == 'pokemon-sprites'){
+    showRenameForm(e.target.dataset.species, e.target.dataset.id)
+  }else if(e.target.dataset.species){
+    removePokeBall(e.target.dataset.species)
+    showRenameForm(e.target.dataset.species, e.target.dataset.id)
+  }
+})
+
+// Global Functions -------------------------------------------------------------------------------------------------------------------------------------------------
 
 function newPlayerStart() {
   const locationP = leftColumn.querySelector('#location-p')
@@ -63,13 +102,7 @@ function foundItem() {
   }
 }
 
-// Left Column Functions
-
-leftColumn.addEventListener('click', e => {
-  if(e.target.id = 'hpup-li'){
-    removeHpUp()
-  }
-})
+// Left Column Functions -------------------------------------------------------------------------------------------------------------------------------------------------
 
 function addPokemon(pokemonName, pokemonSpecies, pokemonId) {
   if(leftColumn.querySelector('#pokeball-amount').innerText.slice(1) == 0){return}
@@ -99,32 +132,13 @@ function addHeal(currentHP) {
   }
 }
 
-// Center Column Functions
+const renderItem = (item) => {
+  const itemLi = document.createElement('li')
+  document.getElementById('inventory-ul').append(itemLi)
+  itemLi
+}
 
-centerColumn.addEventListener('submit', e => {
-  e.preventDefault()
-  
-  if(e.target.className == 'login-form'){
-    // fetch user, show them the starting page/choose pokemon - e.target.username.value
-    chooseStartingPokemon()
-  }else if(e.target.id == 'starter-form'){
-    newPlayerStart()
-    addPokemon(e.target.name.value, e.target.dataset.species, e.target.dataset.id)
-  }else if(e.target.id == 'rename-form'){
-    addPokemon(e.target.name.value, e.target.dataset.species, e.target.dataset.id)
-    showCurrentLocation()
-    e.target.remove()
-  }
-})
-
-centerColumn.addEventListener('click', e => {
-  if(e.target.className == 'pokemon-sprites'){
-    showRenameForm(e.target.dataset.species, e.target.dataset.id)
-  }else if(e.target.dataset.species){
-    removePokeBall(e.target.dataset.species)
-    showRenameForm(e.target.dataset.species, e.target.dataset.id)
-  }
-})
+// Center Column Functions -------------------------------------------------------------------------------------------------------------------------------------------------
 
 function showRenameForm(pokemonSpecies, pokemonId) {
   if(centerColumn.querySelector('#starter-form')){
@@ -169,6 +183,30 @@ function chooseStartingPokemon() {
     <p id="message">Please select your starting Pokemon!</p>
     `
   createRenameForm('starter')
+}
+
+function newPlayerStart() {
+  const locationP = leftColumn.querySelector('#location-p')
+  locationP.innerText = 'Pallet Town Center' // set last location name
+  locationP.dataset.location = 13 // set last locaiton id
+  centerColumn.innerHTML = `
+    <img id="location-img" src="./images/locations/img_13.png">
+    <p id="message">Welcome to Pallet Town! Use your arrow keys to move around. You can search for Pokémon to collect, but first you need to find some Poké Balls! Professor Oak has given you one to start with. He also said it's dangerous out there, so take an HP-UP as well!</p>
+    `
+
+  const pokeBallLi = document.createElement('li')
+  const hpUpLi = document.createElement('li')
+
+  // get user hp, item, and pokemon count/names
+  leftColumn.querySelector('#hp-p').innerText = 100 
+
+  pokeBallLi.id = 'pokeball-li'
+  pokeBallLi.innerHTML = `<img src="./images/inventory/poke-ball.png" class="inventory-sprite"> Poké Ball <span id="pokeball-amount">x1</span>`
+  leftColumn.querySelector('#inventory-ul').append(pokeBallLi)
+
+  hpUpLi.id = 'hpup-li'
+  hpUpLi.innerHTML = `<img src="./images/inventory/hp-up.png" class="inventory-sprite"> HP-UP <span id="hpup-amount">x1</span>`
+  leftColumn.querySelector('#inventory-ul').append(hpUpLi)
 }
 
 function showCurrentLocation() {
@@ -219,7 +257,7 @@ function failedMessage(message) {
 function encounterCheck() {
   const num = Math.floor(Math.random()*100)+1
   if(num < 20){
-    fetchPokemon()
+    getRandomPokemon()
     return
   }else if(num > 80){
     foundItem()
@@ -240,18 +278,85 @@ function pokemonEncounter(pokemon) {
   createRenameForm()
 }
 
-// Right Column Functions
+// Right Column Functions -------------------------------------------------------------------------------------------------------------------------------------------------
 
-// Fetch requests
+const renderUser = (user) => {
+  const userLi = document.createElement("li")
+  document.querySelector('.logo-img').dataset.currentUser = user.id
+  userLi.id = user.id
+  userLi.dataset.maxHp = user.max_hp
+  userLi.dataset.currentHp = user.current_hp
+  userLi.textContent = `${user.name}`
+  scoreboard.append(userLi)
+}
 
-function fetchPokemon() {
+// Fetch requests ---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+function getRandomPokemon() {
   const num = Math.floor(Math.random()*151)+1  
   fetch(`https://pokeapi.co/api/v2/pokemon/${num}`)
     .then(resp => resp.json())
     .then(data => pokemonEncounter(data))
 }
 
-// Keeping this on the bottom because it's so long
+const postItem = (itemName, userId) => {
+  baseurl = "http://localhost:3000/items/"
+  let options = {
+      method: "POST",
+      headers: {"content-type": "application/json",
+                "accept": "applicatio/json" },
+      body: JSON.stringify({name: itemName,
+            user_id: userId})
+      }
+
+    fetch(baseurl, options)
+    .then(resp => resp.json())
+    .then(item => item)
+}
+
+const postPokemon = (name, species, pokeId, userId) => {
+  let options = {
+    method: "POST",
+    headers: {"content-type": "application/json",
+              "accept": "application/json"
+    },
+    body: JSON.stringify({name: name,
+          species: species,
+          user_id: userId
+          })
+  }
+
+  fetch(baseurl + `pokemons/`, options)
+  .then(resp => resp.json())
+  .then(pokemon => addPokemon(pokemon.name, pokemon.species, pokeId))
+}
+
+const userLogin = (name) => {
+  let options = {
+    method: "POST",
+    headers: {"content-type": "application/json",
+              "accept": "application/json"
+    },
+    body: JSON.stringify({name: name,
+          })
+  }
+
+  fetch(baseurl+`users`, options)
+  .then(resp => resp.json())
+  .then(user => renderUser(user))
+}
+
+const getUsers = () => {
+  fetch(baseurl+`users`)
+  .then(resp => resp.json())
+  .then(users => {
+    users.forEach(user => {
+      renderUser(user)
+    });
+  })
+}
+
+// Keeping this on the bottom because it's so long -----------------------------------------------------------------------------------------------------------------------
 
 function validMove(currentLocation, direction) {
   switch(currentLocation) {
@@ -309,3 +414,5 @@ function validMove(currentLocation, direction) {
       return true
   }
 }
+
+getUsers();

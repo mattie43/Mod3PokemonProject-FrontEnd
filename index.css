@@ -3,6 +3,16 @@
   --pokemon-yellow: #fbcb04;
 }
 
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--pokemon-blue); 
+  border: 2px solid var(--pokemon-yellow);
+  border-radius: 5px;
+  height: 5px;
+}
+
 body {
   background-color: var(--pokemon-blue);
 }
@@ -138,4 +148,13 @@ ul {
 #starter-form.close {
   top: 100%;
   height: 0;
+}
+
+#scoreboard-ol {
+  overflow: auto;
+  max-height: 57vh;
+}
+#pokemon-ul {
+  overflow: auto;
+  max-height: 30vh;
 }
