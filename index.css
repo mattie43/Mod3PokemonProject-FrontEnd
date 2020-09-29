@@ -93,9 +93,36 @@ ul {
   height: 3vh;
 }
 
-#username {
+#username, #name {
   border: 2px solid var(--pokemon-blue);
 }
-#username:focus {
+#username:focus, #name:focus {
   border: 2px solid var(--pokemon-yellow);
+}
+
+#rename-form {
+  position: absolute;
+  /* top: 40vh; */
+  bottom: 15vh;
+  width: 20vh;
+  height: 20vh;
+  overflow: hidden;
+  transition: all 1s;
+}
+#rename-form.close {
+  top: 100%;
+  height: 0;
+}
+#starter-form {
+  position: absolute;
+  /* top: 40vh; */
+  bottom: 10vh;
+  width: 20vh;
+  height: 20vh;
+  overflow: hidden;
+  transition: all 1s;
+}
+#starter-form.close {
+  top: 100%;
+  height: 0;
 }

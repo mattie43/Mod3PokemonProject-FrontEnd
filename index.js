@@ -3,20 +3,32 @@ const leftColumn = document.querySelector('.left-column')
 
 centerColumn.addEventListener('submit', e => {
   e.preventDefault()
-
-  // fetch user, show them the starting page/choose pokemon - e.target.username.value
   
-  choosePokemon()
+  if(e.target.className == 'login-form'){
+    // fetch user, show them the starting page/choose pokemon - e.target.username.value
+    chooseStartingPokemon()
+  }else if(e.target.id == 'starter-form'){
+    newPlayerStart()
+    addPokemon(e.target.name.value, e.target.dataset.species, e.target.dataset.id)
+  }else if(e.target.id == 'rename-form'){
+    addPokemon(e.target.name.value, e.target.dataset.species, e.target.dataset.id)
+    showCurrentLocation()
+    e.target.remove()
+  }
 })
 
 centerColumn.addEventListener('click', e => {
   if(e.target.className == 'pokemon-sprites'){
-    newPlayerStart()
-    addPokemon(e.target.dataset.name, e.target.dataset.id)
-  }else if(e.target.dataset.name){
-    addPokemon(e.target.dataset.name, e.target.dataset.id)
-    removePokeBall(e.target.dataset.name)
-    showCurrentLocation()
+    showRenameForm(e.target.dataset.species, e.target.dataset.id)
+  }else if(e.target.dataset.species){
+    removePokeBall(e.target.dataset.species)
+    showRenameForm(e.target.dataset.species, e.target.dataset.id)
+  }
+})
+
+leftColumn.addEventListener('click', e => {
+  if(e.target.id = 'hpup-li'){
+    removeHpUp()
   }
 })
 
@@ -26,18 +38,49 @@ document.addEventListener('keydown', e => {
   }
 })
 
-function choosePokemon() {
+function showRenameForm(pokemonSpecies, pokemonId) {
+  if(centerColumn.querySelector('#starter-form')){
+    centerColumn.querySelector('#starter-form').className = ''
+  }else{
+    centerColumn.querySelector('#rename-form').className = ''
+  }
+  const renameLabel = centerColumn.querySelector('#rename-label')
+  renameLabel.innerText = `What would you like to name ${pokemonSpecies}?`
+  renameLabel.parentNode.parentNode.dataset.species = pokemonSpecies
+  renameLabel.parentNode.parentNode.dataset.id = pokemonId
+}
+
+function createRenameForm(starter) {
+  const form = document.createElement('form')
+  if(starter){
+    form.id = 'starter-form'
+  }else{
+    form.id = 'rename-form'
+  }
+  form.classList = 'close'
+  form.innerHTML = `
+    <div class="form-group">
+      <label id="rename-label" for="name"></label>
+      <input type="name" class="form-control" id="name">
+    </div>
+    <button type="submit" class="btn btn-primary btn-md">Submit</button>
+    `
+  centerColumn.insertBefore(form, centerColumn.lastElementChild)
+}
+
+function chooseStartingPokemon() {
   centerColumn.innerHTML = `
     <div class="container">
-      <img class="pokemon-sprites" data-name="Pikachu" data-id="25" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png">
-      <img class="pokemon-sprites" data-name="Bulbasaur" data-id="1" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png">
+      <img class="pokemon-sprites" data-species="Pikachu" data-id="25" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png">
+      <img class="pokemon-sprites" data-species="Bulbasaur" data-id="1" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png">
     </div>
     <div class="container">
-      <img class="pokemon-sprites" data-name="Charmander" data-id="4" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png">
-      <img class="pokemon-sprites" data-name="Squirtle" data-id="7" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png">
+      <img class="pokemon-sprites" data-species="Charmander" data-id="4" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png">
+      <img class="pokemon-sprites" data-species="Squirtle" data-id="7" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png">
     </div>
     <p id="message">Please select your starting Pokemon!</p>
     `
+  createRenameForm('starter')
 }
 
 function newPlayerStart() {
@@ -52,40 +95,68 @@ function newPlayerStart() {
   const pokeBallLi = document.createElement('li')
   const hpUpLi = document.createElement('li')
 
-  // get user item and pokemon count/names
+  // get user hp, item, and pokemon count/names
+  leftColumn.querySelector('#hp-p').innerText = 100
+
+  pokeBallLi.id = 'pokeball-li'
   pokeBallLi.innerHTML = `<img src="./images/inventory/poke-ball.png" class="inventory-sprite"> Poké Ball <span id="pokeball-amount">x1</span>`
   leftColumn.querySelector('#inventory-ul').append(pokeBallLi)
 
+  hpUpLi.id = 'hpup-li'
   hpUpLi.innerHTML = `<img src="./images/inventory/hp-up.png" class="inventory-sprite"> HP-UP <span id="hpup-amount">x1</span>`
   leftColumn.querySelector('#inventory-ul').append(hpUpLi)
 }
 
-function addPokemon(pokemonName, pokemonId) {
+function addPokemon(pokemonName, pokemonSpecies, pokemonId) {
   if(leftColumn.querySelector('#pokeball-amount').innerText.slice(1) == 0){return}
   const pokeLi = document.createElement('li')
-  pokeLi.innerText = pokemonName
-  pokeLi.dataset.name = pokemonName
+  pokeLi.innerText = `${pokemonName} - ${pokemonSpecies}`
+  pokeLi.dataset.species = pokemonSpecies
   pokeLi.dataset.id = pokemonId
   leftColumn.querySelector('#pokemon-ul').append(pokeLi)  
 }
 
-function removePokeBall(pokemonName) {  
+function removePokeBall(pokemonSpecies) {  
   const currentAmount = leftColumn.querySelector('#pokeball-amount').innerText.slice(1)
   if(currentAmount == 0){
-    centerColumn.querySelector('#message').innerText = `Try getting more Poké Balls first! And ${pokemonName} ran away!`
+    centerColumn.querySelector('#message').innerText = `Try getting more Poké Balls first! And ${pokemonSpecies} ran away!`
     return
   }
-  centerColumn.querySelector('#message').innerText = `You successfully caught ${pokemonName}!`
+  centerColumn.querySelector('#message').innerText = `You successfully caught ${pokemonSpecies}!`
   // update inventory in database
   leftColumn.querySelector('#pokeball-amount').innerText = 'x' + (parseInt(currentAmount) - 1)
 }
 
 function showCurrentLocation() {
+
   const locationId = leftColumn.querySelector('#location-p').dataset.location
   const locationImg = centerColumn.querySelector('#location-img')
   locationImg.removeAttribute("data-id")
   locationImg.removeAttribute("data-name")
   locationImg.src = `./images/locations/img_${locationId}.png`
+}
+
+function removeHpUp() {
+  const hpupAmount = leftColumn.querySelector('#hpup-amount').innerText.slice(1)
+  const currentHP = parseInt(leftColumn.querySelector('#hp-p').innerText)
+  if(hpupAmount == 0){
+    centerColumn.querySelector('#message').innerText = `Try getting more HP-UP first!`
+  }else if(currentHP == 100){
+    centerColumn.querySelector('#message').innerText = `You're already at full health!`
+  }else{
+    centerColumn.querySelector('#message').innerText = `You successfully healed 20 HP!`
+    // update HP in database
+    leftColumn.querySelector('#hpup-amount').innerText = 'x' + (parseInt(hpupAmount) - 1)
+    addHeal(currentHP)
+  }
+}
+
+function addHeal(currentHP) {
+  if(currentHP + 20 > 100){
+    leftColumn.querySelector('#hp-p').innerText = 100
+  }else{
+    leftColumn.querySelector('#hp-p').innerText = currentHP + 20
+  }
 }
 
 function moveLocation(direction) {
@@ -162,10 +233,13 @@ function fetchPokemon() {
 function pokemonEncounter(pokemon) {
   const capitalName = pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
   centerColumn.querySelector('#message').innerText = `You found ${capitalName}! Click on it to try and capture it, or run away!`
+
   const locationImg = centerColumn.querySelector('#location-img')
   locationImg.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`
   locationImg.dataset.id = pokemon.id
-  locationImg.dataset.name = capitalName
+  locationImg.dataset.species = capitalName
+
+  createRenameForm()
 }
 
 function validMove(currentLocation, direction) {
