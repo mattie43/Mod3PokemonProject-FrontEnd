@@ -10,7 +10,6 @@
   background: var(--pokemon-blue); 
   border: 2px solid var(--pokemon-yellow);
   border-radius: 5px;
-  height: 5px;
 }
 
 body {
@@ -129,8 +128,9 @@ ul {
   border: 2px solid var(--pokemon-yellow);
 }
 #rename-form.close {
-  top: 100%;
+  top: 90%;
   height: 0;
+  z-index: -1;
 }
 #starter-form {
   position: absolute;
@@ -155,7 +155,8 @@ ul {
   overflow: auto;
   max-height: 57vh;
 }
-/* #pokemon-ul {
+
+#pokemon-ul, #inventory-ul {
   overflow: auto;
-  max-height: 30vh;
-} */
+  max-height: 12vh;
+}

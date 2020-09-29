@@ -6,6 +6,20 @@ const scoreboard = document.querySelector('#scoreboard-ol')
 const logoImg = document.querySelector('.logo-img')
 const baseurl = "http://localhost:3000/"
 
+// Helper functions------------------------------------------------
+
+const capitalize = (string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+const arrayFromHTMLcollection = (HTMLcoll) => {
+  new_array = []
+  for (const e of HTMLcoll) {
+    new_array.push((e.innerHTML).toLowerCase())
+  }
+  return new_array
+}
+
 // Event Listeners --------------------------------------------------------------------------------------------------------------------------------------------------
 
 document.addEventListener('keydown', e => {
@@ -24,11 +38,11 @@ centerColumn.addEventListener('submit', e => {
   e.preventDefault()
   
   if(e.target.className == 'login-form'){
-    // fetch user, show them the starting page/choose pokemon - e.target.username.value
     if(nameExists(e.target.username.value)){
-      userLogin(e.target.username.value)
+      userLogin(e.target.username.value, true)
       showCurrentLocation()
     }else{
+      userLogin(e.target.username.value)
       chooseStartingPokemon()
     }
   }else if(e.target.id == 'starter-form'){
@@ -45,6 +59,13 @@ centerColumn.addEventListener('click', e => {
   if(e.target.className == 'pokemon-sprites'){
     showRenameForm(e.target.dataset.species, e.target.dataset.id)
   }else if(e.target.dataset.species){
+    // add proper pokeball check
+    if(leftColumn.querySelector('#pokeball-amount') && leftColumn.querySelector('#pokeball-amount').innerText.slice(1) == 0){
+      centerColumn.querySelector('#message').innerText = `You don't have any Poké Balls left to try and capture this pokemon! And ${e.target.dataset.species} ran away!`
+      showCurrentLocation()
+      centerColumn.querySelector('#rename-form').remove()
+      return
+    }
     removePokeBall(e.target.dataset.species)
     showRenameForm(e.target.dataset.species, e.target.dataset.id)
   }
@@ -64,16 +85,36 @@ function newPlayerStart() {
   const pokeBallLi = document.createElement('li')
   const hpUpLi = document.createElement('li')
 
-  // get user hp, item, and pokemon count/names
   leftColumn.querySelector('#hp-p').innerText = 100
 
   pokeBallLi.id = 'pokeball-li'
   pokeBallLi.innerHTML = `<img src="./images/inventory/poke-ball.png" class="inventory-sprite"> Poké Ball <span id="pokeball-amount">x1</span>`
   leftColumn.querySelector('#inventory-ul').append(pokeBallLi)
 
-  // hpUpLi.id = 'hpup-li'
   hpUpLi.innerHTML = `<img src="./images/inventory/hp-up.png" class="inventory-sprite"> HP-UP <span id="hpup-amount">x1</span>`
   leftColumn.querySelector('#inventory-ul').append(hpUpLi)
+}
+
+function playerContinue(user) {
+  const locationP = leftColumn.querySelector('#location-p')
+  locationP.innerText = 'Pallet Town Center'
+  locationP.dataset.location = 13
+  centerColumn.innerHTML = `
+    <img id="location-img" src="./images/locations/img_13.png">
+    <p id="message">Welcome back to Pallet Town!</p>
+    `
+
+  leftColumn.querySelector('#hp-p').innerText = user.current_hp
+
+  for (const item of user.items) {
+    const newLi = document.createElement('li')
+    newLi.innerHTML = `<img src="${item.img_url}" class="inventory-sprite"> ${item.name} <span id="item-${item.api_id}-amount">x${item.amount}</span>`
+    leftColumn.querySelector('#inventory-ul').append(newLi)
+  }
+  
+  for (const pokemon of user.pokemons) {
+    addPokemon(pokemon.name, pokemon.species, pokemon.id, pokemon.img_url)
+  }
 }
 
 function removeHpUp() {
@@ -108,22 +149,27 @@ function foundItem() {
 
 // Left Column Functions -------------------------------------------------------------------------------------------------------------------------------------------------
 
-function addPokemon(pokemonName, pokemonSpecies, pokemonId) {
-  if(leftColumn.querySelector('#pokeball-amount').innerText.slice(1) == 0){return}
+function addPokemon(pokemonName, pokemonSpecies, pokemonId, pokemonImg) {
   const pokeLi = document.createElement('li')
+  const pokeImg = document.createElement('img')
+  const pokeDiv = document.createElement('div')
   const capitalSpecies = pokemonSpecies.charAt(0).toUpperCase() + pokemonSpecies.slice(1)
-  pokeLi.innerText = `${pokemonName} - ${capitalSpecies}`
+
+  pokeLi.innerHTML = `${pokemonName} - ${capitalSpecies}`
   pokeLi.dataset.species = pokemonSpecies
   pokeLi.dataset.id = pokemonId
-  leftColumn.querySelector('#pokemon-ul').append(pokeLi)  
+
+  pokeImg.src = pokemonImg
+
+  pokeDiv.classList = 'container'
+
+  pokeDiv.append(pokeLi)
+  pokeDiv.append(pokeImg)
+  leftColumn.querySelector('#pokemon-ul').append(pokeDiv)
 }
 
 function removePokeBall(pokemonSpecies) {  
   const currentAmount = leftColumn.querySelector('#pokeball-amount').innerText.slice(1)
-  if(currentAmount == 0){
-    centerColumn.querySelector('#message').innerText = `Try getting more Poké Balls first! And ${pokemonSpecies} ran away!`
-    return
-  }
   centerColumn.querySelector('#message').innerText = `You successfully caught ${pokemonSpecies}!`
   // update inventory in database
   leftColumn.querySelector('#pokeball-amount').innerText = 'x' + (parseInt(currentAmount) - 1)
@@ -137,15 +183,11 @@ function addHeal(currentHP) {
   }
 }
 
-const renderItem = (itemCount) => {
+const renderItem = (userItems) => {
   const itemLi = document.createElement('li')
-  itemLi.innerText = `<img src="./images/inventory/hp-up.png" class="inventory-sprite"> HP-UP <span id="hpup-amount">x${itemCount}</span>`
+  itemLi.id = item.api_id
+  itemLi.innerHTML = `<img src="${item.img_url}" class="inventory-sprite"> ${item.name} <span id="pokeball-amount">x${item.amount}</span>`
   document.getElementById('inventory-ul').append(itemLi)
-}
-
-const renderOldUser = (user) => {  
-  leftColumn.querySelector('#hp-p').innerText = user.current_hp
-  document.querySelector('.logo-img').dataset.currentUser = user.id
 }
 
 // Center Column Functions -------------------------------------------------------------------------------------------------------------------------------------------------
@@ -173,9 +215,9 @@ function createRenameForm(starter) {
   form.innerHTML = `
     <div class="form-group">
       <label id="rename-label" for="name"></label>
-      <input type="name" class="form-control" id="name">
+      <input type="name" class="form-control" id="name" >
     </div>
-    <button type="submit" class="btn btn-primary btn-md">Submit</button>
+    <button type="submit" class="btn btn-primary btn-md" value="Submit">Submit</button>
     `
   centerColumn.insertBefore(form, centerColumn.lastElementChild)
 }
@@ -197,10 +239,12 @@ function chooseStartingPokemon() {
 
 function showCurrentLocation() {
   const locationId = leftColumn.querySelector('#location-p').dataset.location
-  const locationImg = centerColumn.querySelector('#location-img')
-  locationImg.removeAttribute("data-id")
-  locationImg.removeAttribute("data-name")
-  locationImg.src = `./images/locations/img_${locationId}.png`
+  if(centerColumn.querySelector('#location-img')){
+    const locationImg = centerColumn.querySelector('#location-img')
+    locationImg.removeAttribute("data-id")
+    locationImg.removeAttribute("data-name")
+    locationImg.src = `./images/locations/img_${locationId}.png`
+  }
 }
 
 function moveLocation(direction) {
@@ -287,6 +331,20 @@ function nameExists(username) {
 
 // Fetch requests ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
+const getItem = (itemName, userId) => {
+  let options = {
+      method: "POST",
+      headers: {"content-type": "application/json",
+                "accept": "applicatio/json" },
+      body: JSON.stringify({api_id: itemName,
+            user_id: userId})
+      }
+
+    fetch(baseurl + `items`, options)
+    .then(resp => resp.json())
+    .then(item => renderItem(item))
+}
+
 function getRandomPokemon() {
   const num = Math.floor(Math.random()*151)+1  
   fetch(`https://pokeapi.co/api/v2/pokemon/${num}`)
@@ -323,10 +381,10 @@ const postPokemon = (name, species, pokeId, userId) => {
 
   fetch(baseurl + `pokemons/`, options)
   .then(resp => resp.json())
-  .then(pokemon => addPokemon(pokemon.name, pokemon.species, pokeId))
+  .then(pokemon => addPokemon(pokemon.name, pokemon.species, pokeId, pokemon.img_url))
 }
 
-const userLogin = (name) => {
+const userLogin = (name, continueGame) => {
   let options = {
     method: "POST",
     headers: {"content-type": "application/json",
@@ -338,7 +396,13 @@ const userLogin = (name) => {
 
   fetch(baseurl+`users`, options)
   .then(resp => resp.json())
-  .then(user => renderOldUser(user))
+  .then(user => {
+    if(continueGame){
+      playerContinue(user)
+    }else{
+      renderNewUser(user)
+    }
+  })
 }
 
 const getUsers = () => {
