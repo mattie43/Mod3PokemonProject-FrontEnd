@@ -45,7 +45,7 @@ leftColumn.addEventListener('click', e => {
       showRenameForm(pokemonEl.dataset.species, pokemonEl.dataset.id)
     }
   }else if(e.target.id.slice(0,2) == 'hp' || e.target.id.slice(0,6) == 'health'){
-    if(leftColumn.querySelector('#hp-p').innerText == '100'){
+    if(leftColumn.querySelector('#hp-p').innerHTML = `${logoImg.data}`){
       centerColumn.querySelector('#message').innerText = 'You are already at full HP!'
     }else{
       addHP(e.target)
@@ -95,8 +95,8 @@ function newPlayerStart() {
 
   leftColumn.querySelector('#hp-p').innerText = 100
 
-  postItem('poke-ball', logoImg.dataset.currentUser, 'starter')
-  postItem('hp-up', logoImg.dataset.currentUser, 'starter')
+  postItem(4, logoImg.dataset.currentUser, 'starter')
+  postItem(45, logoImg.dataset.currentUser, 'starter')
 }
 
 function playerContinue(user) {
@@ -276,15 +276,15 @@ function encounterCheck() {
   if(between(num, 1, 9)){
     getRandomPokemon()
   }else if(between(num, 10, 11)){
-    postItem('master-ball', currentUser)
+    postItem(1, currentUser)
   }else if(between(num, 20, 29)){
-    postItem('poke-ball', currentUser)
+    postItem(4, currentUser)
   }else if(between(num, 30, 35)){
-    postItem('ultra-ball', currentUser)
+    postItem(2, currentUser)
   }else if(between(num, 40, 49)){
-    postItem('hp-up', currentUser)
+    postItem(45, currentUser)
   }else if(between(num, 50, 53)){
-    postItem('health-wing', currentUser)
+    postItem(26, currentUser)
     // add take damage encounter
   }else{
     failedMessage("You didn't find anything of use here. Try exploring more!")
@@ -341,12 +341,12 @@ const updateHP = (hpAmount) => {
     fetch(baseurl + `users/${logoImg.dataset.currentUser}`, options)
 }
 
-const postItem = (itemName, userId, starter) => {
+const postItem = (apiId, userId, starter) => {
   let options = {
       method: "POST",
       headers: {"content-type": "application/json",
                 "accept": "applicatio/json" },
-      body: JSON.stringify({api_id: itemName,
+      body: JSON.stringify({api_id: apiId,
             user_id: userId})
       }
 
@@ -416,6 +416,7 @@ const userLogin = (name, continueGame) => {
 }
 
 const getUsers = () => {
+  scoreboard.innerHTML = ""
   fetch(baseurl+`users`)
   .then(resp => resp.json())
   .then(users => {
@@ -486,4 +487,5 @@ function validMove(currentLocation, direction) {
   }
 }
 
-window.setInterval(getUsers(), 1000);
+// setInterval(get);
+getUsers()
