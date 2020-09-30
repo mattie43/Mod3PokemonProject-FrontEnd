@@ -35,15 +35,21 @@ document.addEventListener('keydown', e => {
 leftColumn.addEventListener('click', e => {
   if(e.target.id == 'hpup-li'){
     removeHpUp()
-  }else if(centerColumn.querySelector('#location-img').dataset.species && e.target.className == 'pokeball'){
-    const pokeBallLi = checkForPokeBall()
-    if(pokeBallLi){
-      removePokeBall(e.target.dataset.species, pokeBallLi.querySelector('span'))
-      showRenameForm(e.target.dataset.species, e.target.dataset.id)
+  }else if(centerColumn.querySelector('#location-img').dataset.species && e.target.id.slice(-4) == 'ball'){
+    if(e.target.querySelector('span').innerText.slice(1) == '0'){
+      centerColumn.querySelector('#message').innerText = "You don't have anymore of those Poké Balls to try and capture it with!"
     }else{
-      centerColumn.querySelector('#message').innerText = `You don't have any Poké Balls left to try and capture this pokemon! And ${e.target.dataset.species} ran away!`
-      showCurrentLocation()
-      centerColumn.querySelector('#rename-form').remove()
+      const pokemonEl = centerColumn.querySelector('#location-img')
+      removeItem(e.target)
+      centerColumn.querySelector('#message').innerText = `You successfully caught ${pokemonEl.dataset.species}!`
+      showRenameForm(pokemonEl.dataset.species, pokemonEl.dataset.id)
+    }
+  }else if(e.target.id.slice(0,2) == 'hp' || e.target.id.slice(0,6) == 'health'){
+    if(leftColumn.querySelector('#hp-p').innerText == '100'){
+      centerColumn.querySelector('#message').innerText = 'You are already at full HP!'
+    }else{
+      addHP(e.target)
+      removeItem(e.target)
     }
   }
 })
@@ -69,47 +75,28 @@ centerColumn.addEventListener('submit', e => {
   }
 })
 
-// add click pokeball to catch pokemon, maybe cant encounter pokemon if 0 pokeballs
 centerColumn.addEventListener('click', e => {
+  // choosing starter pokemon
   if(e.target.className == 'pokemon-sprites'){
     showRenameForm(e.target.dataset.species, e.target.dataset.id)
-  }else if(e.target.dataset.species){
-    const pokeBallLi = checkForPokeBall()
-    if(pokeBallLi){
-      removePokeBall(e.target.dataset.species, pokeBallLi.querySelector('span'))
-      showRenameForm(e.target.dataset.species, e.target.dataset.id)
-    }else{
-      centerColumn.querySelector('#message').innerText = `You don't have any Poké Balls left to try and capture this pokemon! And ${e.target.dataset.species} ran away!`
-      showCurrentLocation()
-      centerColumn.querySelector('#rename-form').remove()
-    }
   }
 })
 
 // Global Functions -------------------------------------------------------------------------------------------------------------------------------------------------
 
-function checkForPokeBall() {
-  const allLi = leftColumn.querySelector('#inventory-ul').querySelectorAll('li')
-  for (const itemLi of allLi) {
-    if(itemLi.id.substring(itemLi.id.length - 4) == 'ball'){return itemLi}
-  }
-  return false
-}
-
 function newPlayerStart() {
   const locationP = leftColumn.querySelector('#location-p')
-  locationP.innerText = 'Pallet Town Center' // set last location name
-  locationP.dataset.location = 13 // set last locaiton id
+  locationP.innerText = 'Pallet Town Center'
+  locationP.dataset.location = 13
   centerColumn.innerHTML = `
     <img id="location-img" src="./images/locations/img_13.png">
-    <p id="message">Welcome to Pallet Town! Use your arrow keys to move around. You can search for Pokémon to collect, but first you need to find some Poké Balls! Professor Oak has given you one to start with. He also said it's dangerous out there, so take an HP-UP as well!</p>
+    <p id="message">Welcome to Pallet Town! You can search for Pokémon to collect, but first you need to find some Poké Balls! Professor Oak has given you one to start with. He also said it's dangerous out there, so take an HP-UP as well!</p>
     `
 
   leftColumn.querySelector('#hp-p').innerText = 100
 
-  const currentUser = document.querySelector('.logo-img').dataset.currentUser
-  postItem('poke-ball', currentUser, 'starter')
-  postItem('hp-up', currentUser, 'starter')
+  postItem('poke-ball', logoImg.dataset.currentUser, 'starter')
+  postItem('hp-up', logoImg.dataset.currentUser, 'starter')
 }
 
 function playerContinue(user) {
@@ -129,21 +116,6 @@ function playerContinue(user) {
 
   for (const pokemon of user.pokemons) {
     addPokemon(pokemon.name, pokemon.species, pokemon.id, pokemon.img_url)
-  }
-}
-
-function foundItem() {
-  const num = Math.floor(Math.random()*2)+1
-  if(num == 1){
-    centerColumn.querySelector('#message').innerText = "You found a Poké Ball! Let's add it to your inventory!"
-    const currentAmount = leftColumn.querySelector('#pokeball-amount').innerText.slice(1)
-    // update inventory in database
-    leftColumn.querySelector('#pokeball-amount').innerText = 'x' + (parseInt(currentAmount) + 1)
-  }else{
-    centerColumn.querySelector('#message').innerText = "You found a HP-UP! Let's add it to your inventory!"
-    const currentAmount = leftColumn.querySelector('#hpup-amount').innerText.slice(1)
-    // update inventory in database
-    leftColumn.querySelector('#hpup-amount').innerText = 'x' + (parseInt(currentAmount) + 1)
   }
 }
 
@@ -175,25 +147,34 @@ function addItem(item) {
   }else{
     const newLi = document.createElement('li')
     newLi.id = item.api_id
+    newLi.dataset.dbId = item.id
     newLi.innerHTML = `<img src="${item.img_url}" class="inventory-sprite"> ${item.name} <span id="${item.api_id}-amount">x${item.amount}</span>`
     leftColumn.querySelector('#inventory-ul').append(newLi)
   }
 }
 
-function removePokeBall(pokemonSpecies, pokeBallSpan) {
-  const currentAmount = pokeBallSpan.innerText.slice(1)
-  // update inventory in database
-  pokeBallSpan.innerText = 'x' + (parseInt(currentAmount) - 1)
-  centerColumn.querySelector('#message').innerText = `You successfully caught ${pokemonSpecies}!`
+function removeItem(itemEl) {
+  const currentAmount = itemEl.querySelector('span').innerText.slice(1)
+  itemEl.querySelector('span').innerText = 'x' + (parseInt(currentAmount) - 1)
+  if(itemEl.querySelector('span').innerText.slice(1) == '0'){itemEl.remove()}
+  deleteItem(itemEl.dataset.dbId)
 }
 
-// function addHeal(currentHP) {
-//   if(currentHP + 20 > 100){
-//     leftColumn.querySelector('#hp-p').innerText = 100
-//   }else{
-//     leftColumn.querySelector('#hp-p').innerText = currentHP + 20
-//   }
-// }
+function addHP(itemEl) {
+  let healAmount = 50
+  if(itemEl.id.slice(0,2) == 'hp'){healAmount = 20}
+
+  const hpEl = leftColumn.querySelector('#hp-p')
+  const currentHP = hpEl.innerText
+
+  if(parseInt(currentHP) + healAmount > 100){
+    hpEl.innerText = 100
+  }else{
+    hpEl.innerText = parseInt(currentHP) + healAmount
+  }
+
+  updateHP(hpEl.innerText)
+}
 
 // Center Column Functions -------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -247,7 +228,7 @@ function showCurrentLocation() {
   if(centerColumn.querySelector('#location-img')){
     const locationImg = centerColumn.querySelector('#location-img')
     locationImg.removeAttribute("data-id")
-    locationImg.removeAttribute("data-name")
+    locationImg.removeAttribute("data-species")
     locationImg.src = `./images/locations/img_${locationId}.png`
   }
 }
@@ -291,7 +272,7 @@ function failedMessage(message) {
 
 function encounterCheck() {
   const num = Math.floor(Math.random()*100)+1
-  const currentUser = document.querySelector('.logo-img').dataset.currentUser
+  const currentUser = logoImg.dataset.currentUser
   if(between(num, 1, 9)){
     getRandomPokemon()
   }else if(between(num, 10, 11)){
@@ -312,7 +293,7 @@ function encounterCheck() {
 
 function pokemonEncounter(pokemon) {
   const capitalName = pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
-  centerColumn.querySelector('#message').innerText = `You found ${capitalName}! Click on it to try and capture it, or run away!`
+  centerColumn.querySelector('#message').innerText = `You found ${capitalName}! Try and capture it with one of your Poké Balls, or run away!`
 
   const locationImg = centerColumn.querySelector('#location-img')
   locationImg.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`
@@ -330,7 +311,7 @@ function displayItem(itemName) {
 
 const renderNewUser = (user) => {
   const userLi = document.createElement("li")
-  document.querySelector('.logo-img').dataset.currentUser = user.id
+  logoImg.dataset.currentUser = user.id
   userLi.id = user.id
   userLi.dataset.name = user.name
   userLi.dataset.maxHp = user.max_hp
@@ -349,6 +330,17 @@ function nameExists(username) {
 
 // Fetch requests ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
+const updateHP = (hpAmount) => {
+  let options = {
+      method: "PATCH",
+      headers: {"content-type": "application/json",
+                "accept": "applicatio/json" },
+      body: JSON.stringify({current_hp: hpAmount})
+      }
+
+    fetch(baseurl + `users/${logoImg.dataset.currentUser}`, options)
+}
+
 const postItem = (itemName, userId, starter) => {
   let options = {
       method: "POST",
@@ -366,6 +358,16 @@ const postItem = (itemName, userId, starter) => {
       }
       addItem(item)
     })
+}
+
+const deleteItem = (itemId) => {
+  let options = {
+      method: "DELETE",
+      headers: {"content-type": "application/json",
+                "accept": "applicatio/json" }
+      }
+
+    fetch(baseurl + `items/${itemId}`, options)
 }
 
 function getRandomPokemon() {
