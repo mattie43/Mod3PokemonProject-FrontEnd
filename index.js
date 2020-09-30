@@ -5,6 +5,10 @@ const leftColumn = document.querySelector('.left-column')
 const scoreboard = document.querySelector('#scoreboard-ol')
 const logoImg = document.querySelector('.logo-img')
 const baseurl = "http://localhost:3000/"
+const locationNames = {
+  1: 'Viridan Forest',
+  2: ''
+}
 
 // Helper functions------------------------------------------------
 
@@ -157,7 +161,7 @@ function removeItem(itemEl) {
   const currentAmount = itemEl.querySelector('span').innerText.slice(1)
   itemEl.querySelector('span').innerText = 'x' + (parseInt(currentAmount) - 1)
   if(itemEl.querySelector('span').innerText.slice(1) == '0'){itemEl.remove()}
-  deleteItem(itemEl.dataset.dbId)
+  deleteItem(itemEl.id)
 }
 
 function addHP(itemEl) {
@@ -173,7 +177,13 @@ function addHP(itemEl) {
     hpEl.innerText = parseInt(currentHP) + healAmount
   }
 
-  updateHP(hpEl.innerText)
+  patchHP(hpEl.innerText)
+}
+
+function updateHP(damage) {
+  const currentHP = leftColumn.querySelector('#hp-p').innerText
+  leftColumn.querySelector('#hp-p').innerText = parseInt(currentHP) - damage
+  failedMessage(`You tripped and fell! You took ${damage} damage!`)
 }
 
 // Center Column Functions -------------------------------------------------------------------------------------------------------------------------------------------------
@@ -273,19 +283,36 @@ function failedMessage(message) {
 function encounterCheck() {
   const num = Math.floor(Math.random()*100)+1
   const currentUser = logoImg.dataset.currentUser
-  if(between(num, 1, 9)){
+  if(between(num, 1, 15)){
     getRandomPokemon()
+<<<<<<< HEAD
   }else if(between(num, 10, 11)){
     postItem(1, currentUser)
+=======
+  }else if(between(num, 16, 17)){
+    postItem('master-ball', currentUser)
+>>>>>>> b30fd0d9d581af08b9545130a417ac95094d8058
   }else if(between(num, 20, 29)){
     postItem(4, currentUser)
   }else if(between(num, 30, 35)){
     postItem(2, currentUser)
   }else if(between(num, 40, 49)){
+<<<<<<< HEAD
     postItem(45, currentUser)
   }else if(between(num, 50, 53)){
     postItem(26, currentUser)
     // add take damage encounter
+=======
+    postItem('hp-up', currentUser)
+  }else if(between(num, 50, 51)){
+    postItem('health-wing', currentUser)
+  }else if(between(num, 52, 80)){
+    patchHP(15, currentUser)
+    updateHP(15)
+  }else if(between(num, 81, 90)){
+    patchHP(40, currentUser)
+    updateHP(40)
+>>>>>>> b30fd0d9d581af08b9545130a417ac95094d8058
   }else{
     failedMessage("You didn't find anything of use here. Try exploring more!")
   }
@@ -311,7 +338,6 @@ function displayItem(itemName) {
 
 const renderNewUser = (user) => {
   const userLi = document.createElement("li")
-  logoImg.dataset.currentUser = user.id
   userLi.id = user.id
   userLi.dataset.name = user.name
   userLi.dataset.maxHp = user.max_hp
@@ -330,6 +356,7 @@ function nameExists(username) {
 
 // Fetch requests ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
+<<<<<<< HEAD
 const updateHP = (hpAmount) => {
   let options = {
       method: "PATCH",
@@ -347,6 +374,14 @@ const postItem = (apiId, userId, starter) => {
       headers: {"content-type": "application/json",
                 "accept": "applicatio/json" },
       body: JSON.stringify({api_id: apiId,
+=======
+const postItem = (itemName, userId, starter) => {
+  let options = {
+      method: "POST",
+      headers: {"content-type": "application/json",
+                "accept": "application/json" },
+      body: JSON.stringify({api_id: itemName,
+>>>>>>> b30fd0d9d581af08b9545130a417ac95094d8058
             user_id: userId})
       }
 
@@ -360,11 +395,23 @@ const postItem = (apiId, userId, starter) => {
     })
 }
 
+const patchHP = (damage, userId) => {
+  const newHP = parseInt(leftColumn.querySelector('#hp-p').innerText) - damage
+  let options = {
+      method: "PATCH",
+      headers: {"content-type": "application/json",
+                "accept": "application/json" },
+      body: JSON.stringify({current_hp: newHP})
+      }
+
+    fetch(baseurl + `users/${userId}`, options)
+}
+
 const deleteItem = (itemId) => {
   let options = {
       method: "DELETE",
       headers: {"content-type": "application/json",
-                "accept": "applicatio/json" }
+                "accept": "application/json" }
       }
 
     fetch(baseurl + `items/${itemId}`, options)
@@ -409,8 +456,10 @@ const userLogin = (name, continueGame) => {
   .then(user => {
     if(continueGame){
       playerContinue(user)
+      logoImg.dataset.currentUser = user.id
     }else{
       renderNewUser(user)
+      logoImg.dataset.currentUser = user.id
     }
   })
 }
@@ -487,5 +536,9 @@ function validMove(currentLocation, direction) {
   }
 }
 
+<<<<<<< HEAD
 // setInterval(get);
 getUsers()
+=======
+getUsers();
+>>>>>>> b30fd0d9d581af08b9545130a417ac95094d8058
