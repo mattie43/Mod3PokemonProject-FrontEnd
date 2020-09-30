@@ -161,7 +161,7 @@ function removeItem(itemEl) {
   const currentAmount = itemEl.querySelector('span').innerText.slice(1)
   itemEl.querySelector('span').innerText = 'x' + (parseInt(currentAmount) - 1)
   if(itemEl.querySelector('span').innerText.slice(1) == '0'){itemEl.remove()}
-  deleteItem(itemEl.dataset.dbId)
+  deleteItem(itemEl.id)
 }
 
 function addHP(itemEl) {
@@ -177,7 +177,13 @@ function addHP(itemEl) {
     hpEl.innerText = parseInt(currentHP) + healAmount
   }
 
-  updateHP(hpEl.innerText)
+  patchHP(hpEl.innerText)
+}
+
+function updateHP(damage) {
+  const currentHP = leftColumn.querySelector('#hp-p').innerText
+  leftColumn.querySelector('#hp-p').innerText = parseInt(currentHP) - damage
+  failedMessage(`You tripped and fell! You took ${damage} damage!`)
 }
 
 // Center Column Functions -------------------------------------------------------------------------------------------------------------------------------------------------
@@ -277,9 +283,9 @@ function failedMessage(message) {
 function encounterCheck() {
   const num = Math.floor(Math.random()*100)+1
   const currentUser = logoImg.dataset.currentUser
-  if(between(num, 1, 9)){
+  if(between(num, 1, 15)){
     getRandomPokemon()
-  }else if(between(num, 10, 11)){
+  }else if(between(num, 16, 17)){
     postItem('master-ball', currentUser)
   }else if(between(num, 20, 29)){
     postItem('poke-ball', currentUser)
@@ -287,9 +293,14 @@ function encounterCheck() {
     postItem('ultra-ball', currentUser)
   }else if(between(num, 40, 49)){
     postItem('hp-up', currentUser)
-  }else if(between(num, 50, 53)){
+  }else if(between(num, 50, 51)){
     postItem('health-wing', currentUser)
-    // add take damage encounter
+  }else if(between(num, 52, 80)){
+    patchHP(15, currentUser)
+    updateHP(15)
+  }else if(between(num, 81, 90)){
+    patchHP(40, currentUser)
+    updateHP(40)
   }else{
     failedMessage("You didn't find anything of use here. Try exploring more!")
   }
@@ -315,12 +326,11 @@ function displayItem(itemName) {
 
 const renderNewUser = (user) => {
   const userLi = document.createElement("li")
-  logoImg.dataset.currentUser = user.id
   userLi.id = user.id
   userLi.dataset.name = user.name
   userLi.dataset.maxHp = user.max_hp
   userLi.dataset.currentHp = user.current_hp
-  userLi.textContent = `${user.name}`
+  userLi.innerHTML = `${capitalize(user.name)} | <strong>${user.score}</strong>`
   scoreboard.append(userLi)
 }
 
@@ -334,22 +344,11 @@ function nameExists(username) {
 
 // Fetch requests ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
-const updateHP = (hpAmount) => {
-  let options = {
-      method: "PATCH",
-      headers: {"content-type": "application/json",
-                "accept": "applicatio/json" },
-      body: JSON.stringify({current_hp: hpAmount})
-      }
-
-    fetch(baseurl + `users/${logoImg.dataset.currentUser}`, options)
-}
-
 const postItem = (itemName, userId, starter) => {
   let options = {
       method: "POST",
       headers: {"content-type": "application/json",
-                "accept": "applicatio/json" },
+                "accept": "application/json" },
       body: JSON.stringify({api_id: itemName,
             user_id: userId})
       }
@@ -364,11 +363,23 @@ const postItem = (itemName, userId, starter) => {
     })
 }
 
+const patchHP = (damage, userId) => {
+  const newHP = parseInt(leftColumn.querySelector('#hp-p').innerText) - damage
+  let options = {
+      method: "PATCH",
+      headers: {"content-type": "application/json",
+                "accept": "application/json" },
+      body: JSON.stringify({current_hp: newHP})
+      }
+
+    fetch(baseurl + `users/${userId}`, options)
+}
+
 const deleteItem = (itemId) => {
   let options = {
       method: "DELETE",
       headers: {"content-type": "application/json",
-                "accept": "applicatio/json" }
+                "accept": "application/json" }
       }
 
     fetch(baseurl + `items/${itemId}`, options)
@@ -413,8 +424,10 @@ const userLogin = (name, continueGame) => {
   .then(user => {
     if(continueGame){
       playerContinue(user)
+      logoImg.dataset.currentUser = user.id
     }else{
       renderNewUser(user)
+      logoImg.dataset.currentUser = user.id
     }
   })
 }
@@ -423,7 +436,9 @@ const getUsers = () => {
   fetch(baseurl+`users`)
   .then(resp => resp.json())
   .then(users => {
-    users.forEach(user => {
+    users.sort(function(a, b) {
+      return b.score - a.score;
+    }).forEach(user => {
       renderNewUser(user)
     });
   })
