@@ -335,7 +335,7 @@ const renderNewUser = (user) => {
   userLi.dataset.name = user.name
   userLi.dataset.maxHp = user.max_hp
   userLi.dataset.currentHp = user.current_hp
-  userLi.textContent = `${user.name}`
+  userLi.textContent = `${capitalize(user.name)}`
   scoreboard.append(userLi)
 }
 
@@ -417,9 +417,9 @@ const getUsers = () => {
   fetch(baseurl+`users`)
   .then(resp => resp.json())
   .then(users => {
-    users.forEach(user => {
-      renderNewUser(user)
-    });
+    console.log(users.sort(function(a, b) {
+      return a.score - b.score;
+    }));
   })
 }
 
