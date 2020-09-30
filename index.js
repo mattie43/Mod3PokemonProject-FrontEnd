@@ -320,7 +320,7 @@ const renderNewUser = (user) => {
   userLi.dataset.name = user.name
   userLi.dataset.maxHp = user.max_hp
   userLi.dataset.currentHp = user.current_hp
-  userLi.innerHTML = `${capitalize(user.name)} | <strong>${user.score}</strong>`
+  userLi.textContent = `${user.name}`
   scoreboard.append(userLi)
 }
 
@@ -423,9 +423,7 @@ const getUsers = () => {
   fetch(baseurl+`users`)
   .then(resp => resp.json())
   .then(users => {
-    users.sort(function(a, b) {
-      return b.score - a.score;
-    }).forEach(user => {
+    users.forEach(user => {
       renderNewUser(user)
     });
   })
@@ -490,4 +488,4 @@ function validMove(currentLocation, direction) {
   }
 }
 
-window.setInterval(getUsers(), 1000);
+getUsers();
