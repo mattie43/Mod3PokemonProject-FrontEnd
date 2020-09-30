@@ -59,9 +59,17 @@ ul {
   width: 90%;
 }
 
-#heart {
+.building-container {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+}
+
+#building {
+  display: block;
+  margin: auto;
   height: 4vh;
-  margin-top: -1vh;
+  margin-left: 1px;
 }
 
 .hp-container {
@@ -69,6 +77,39 @@ ul {
   align-content: center;
   justify-content: center;
 }
+
+#heart {
+  display: block;
+  margin: auto;
+  height: 4vh;
+}
+
+.backpack-container {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+}
+
+#backpack {
+  display: block;
+  margin: auto;
+  height: 4vh;
+  margin-left: 1px;
+}
+
+.pokedex-container {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+}
+
+#pokedex {
+  display: block;
+  margin: auto;
+  height: 4vh;
+  margin-left: 1px;
+}
+
 
 .center-column {
   align-items: center;

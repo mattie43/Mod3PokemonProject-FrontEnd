@@ -35,6 +35,16 @@ document.addEventListener('keydown', e => {
 leftColumn.addEventListener('click', e => {
   if(e.target.id == 'hpup-li'){
     removeHpUp()
+  }else if(centerColumn.querySelector('#location-img').dataset.species && e.target.className == 'pokeball'){
+    const pokeBallLi = checkForPokeBall()
+    if(pokeBallLi){
+      removePokeBall(e.target.dataset.species, pokeBallLi.querySelector('span'))
+      showRenameForm(e.target.dataset.species, e.target.dataset.id)
+    }else{
+      centerColumn.querySelector('#message').innerText = `You don't have any Poké Balls left to try and capture this pokemon! And ${e.target.dataset.species} ran away!`
+      showCurrentLocation()
+      centerColumn.querySelector('#rename-form').remove()
+    }
   }
 })
 
@@ -59,11 +69,11 @@ centerColumn.addEventListener('submit', e => {
   }
 })
 
+// add click pokeball to catch pokemon, maybe cant encounter pokemon if 0 pokeballs
 centerColumn.addEventListener('click', e => {
   if(e.target.className == 'pokemon-sprites'){
     showRenameForm(e.target.dataset.species, e.target.dataset.id)
   }else if(e.target.dataset.species){
-    // add proper pokeball check
     const pokeBallLi = checkForPokeBall()
     if(pokeBallLi){
       removePokeBall(e.target.dataset.species, pokeBallLi.querySelector('span'))
@@ -159,9 +169,9 @@ function addPokemon(pokemonName, pokemonSpecies, pokemonId, pokemonImg) {
 }
 
 function addItem(item) {
-  if(leftColumn.querySelector(`#${item.api_id}`)){
-    const currentAmount = leftColumn.querySelector(`#${item.api_id}`).querySelector('span').innerText.slice(1)
-    leftColumn.querySelector(`#${item.api_id}`).querySelector('span').innerText = 'x' + (parseInt(currentAmount) + 1)
+  if(leftColumn.querySelector(`#${item.api_id}-amount`)){
+    const currentAmount = leftColumn.querySelector(`#${item.api_id}-amount`).innerText.slice(1)
+    leftColumn.querySelector(`#${item.api_id}-amount`).innerText = 'x' + (parseInt(currentAmount) + 1)
   }else{
     const newLi = document.createElement('li')
     newLi.id = item.api_id
