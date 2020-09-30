@@ -5,6 +5,10 @@ const leftColumn = document.querySelector('.left-column')
 const scoreboard = document.querySelector('#scoreboard-ol')
 const logoImg = document.querySelector('.logo-img')
 const baseurl = "http://localhost:3000/"
+const locationNames = {
+  1: 'Viridan Forest',
+  2: ''
+}
 
 // Helper functions------------------------------------------------
 
