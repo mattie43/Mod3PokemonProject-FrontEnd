@@ -52,7 +52,7 @@ leftColumn.addEventListener('click', e => {
     if(leftColumn.querySelector('#hp-p').innerText == '100'){
       centerColumn.querySelector('#message').innerText = 'You are already at full HP!'
     }else{
-      addHP(e.target)
+      if(e.target.id.slice(0,2) == 'hp'){addHP(20)}else{addHP(40)}
       removeItem(e.target)
     }
   }
@@ -164,10 +164,7 @@ function removeItem(itemEl) {
   deleteItem(itemEl.id)
 }
 
-function addHP(itemEl) {
-  let healAmount = 50
-  if(itemEl.id.slice(0,2) == 'hp'){healAmount = 20}
-
+function addHP(healAmount) {
   const hpEl = leftColumn.querySelector('#hp-p')
   const currentHP = hpEl.innerText
 
@@ -177,7 +174,7 @@ function addHP(itemEl) {
     hpEl.innerText = parseInt(currentHP) + healAmount
   }
 
-  patchHP(hpEl.innerText)
+  patchHP(parseInt(hpEl.innerText), logoImg.dataset.currentUser)
 }
 
 function updateHP(damage) {
@@ -296,10 +293,12 @@ function encounterCheck() {
   }else if(between(num, 50, 51)){
     postItem('health-wing', currentUser)
   }else if(between(num, 52, 80)){
-    patchHP(15, currentUser)
+    const newHP = parseInt(leftColumn.querySelector('#hp-p').innerText) - 15
+    patchHP(newHP, currentUser)
     updateHP(15)
   }else if(between(num, 81, 90)){
-    patchHP(40, currentUser)
+    const newHP = parseInt(leftColumn.querySelector('#hp-p').innerText) - 40
+    patchHP(newHP, currentUser)
     updateHP(40)
   }else{
     failedMessage("You didn't find anything of use here. Try exploring more!")
@@ -363,8 +362,7 @@ const postItem = (itemName, userId, starter) => {
     })
 }
 
-const patchHP = (damage, userId) => {
-  const newHP = parseInt(leftColumn.querySelector('#hp-p').innerText) - damage
+const patchHP = (newHP, userId) => {
   let options = {
       method: "PATCH",
       headers: {"content-type": "application/json",
