@@ -59,6 +59,17 @@ ul {
   width: 90%;
 }
 
+#heart {
+  height: 4vh;
+  margin-top: -1vh;
+}
+
+.hp-container {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+}
+
 .center-column {
   align-items: center;
   display: flex;
@@ -156,7 +167,14 @@ ul {
   max-height: 57vh;
 }
 
-#pokemon-ul, #inventory-ul {
+#pokemon-ul {
   overflow: auto;
   max-height: 12vh;
+}
+#pokemon-ul img{
+  max-height: 9vh;
+}
+#inventory-ul {
+  overflow: auto;
+  max-height: 9vh;
 }
