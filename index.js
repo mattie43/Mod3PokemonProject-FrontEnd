@@ -285,34 +285,22 @@ function encounterCheck() {
   const currentUser = logoImg.dataset.currentUser
   if(between(num, 1, 15)){
     getRandomPokemon()
-<<<<<<< HEAD
-  }else if(between(num, 10, 11)){
-    postItem(1, currentUser)
-=======
   }else if(between(num, 16, 17)){
-    postItem('master-ball', currentUser)
->>>>>>> b30fd0d9d581af08b9545130a417ac95094d8058
+    postItem(1, currentUser)
   }else if(between(num, 20, 29)){
     postItem(4, currentUser)
   }else if(between(num, 30, 35)){
     postItem(2, currentUser)
   }else if(between(num, 40, 49)){
-<<<<<<< HEAD
     postItem(45, currentUser)
-  }else if(between(num, 50, 53)){
-    postItem(26, currentUser)
-    // add take damage encounter
-=======
-    postItem('hp-up', currentUser)
   }else if(between(num, 50, 51)){
-    postItem('health-wing', currentUser)
+    postItem(26, currentUser)
   }else if(between(num, 52, 80)){
     patchHP(15, currentUser)
     updateHP(15)
   }else if(between(num, 81, 90)){
     patchHP(40, currentUser)
     updateHP(40)
->>>>>>> b30fd0d9d581af08b9545130a417ac95094d8058
   }else{
     failedMessage("You didn't find anything of use here. Try exploring more!")
   }
@@ -356,32 +344,12 @@ function nameExists(username) {
 
 // Fetch requests ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
-<<<<<<< HEAD
-const updateHP = (hpAmount) => {
-  let options = {
-      method: "PATCH",
-      headers: {"content-type": "application/json",
-                "accept": "applicatio/json" },
-      body: JSON.stringify({current_hp: hpAmount})
-      }
-
-    fetch(baseurl + `users/${logoImg.dataset.currentUser}`, options)
-}
-
 const postItem = (apiId, userId, starter) => {
   let options = {
       method: "POST",
       headers: {"content-type": "application/json",
-                "accept": "applicatio/json" },
-      body: JSON.stringify({api_id: apiId,
-=======
-const postItem = (itemName, userId, starter) => {
-  let options = {
-      method: "POST",
-      headers: {"content-type": "application/json",
                 "accept": "application/json" },
-      body: JSON.stringify({api_id: itemName,
->>>>>>> b30fd0d9d581af08b9545130a417ac95094d8058
+      body: JSON.stringify({api_id: apiId,
             user_id: userId})
       }
 
@@ -536,9 +504,5 @@ function validMove(currentLocation, direction) {
   }
 }
 
-<<<<<<< HEAD
 // setInterval(get);
-getUsers()
-=======
 getUsers();
->>>>>>> b30fd0d9d581af08b9545130a417ac95094d8058
