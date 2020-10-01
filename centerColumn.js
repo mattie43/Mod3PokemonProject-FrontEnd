@@ -8,6 +8,8 @@ function showRenameForm(pokemonSpecies, pokemonId) {
   renameLabel.innerText = `What would you like to name ${pokemonSpecies}?`
   renameLabel.parentNode.parentNode.dataset.species = pokemonSpecies
   renameLabel.parentNode.parentNode.dataset.id = pokemonId
+
+  getUsers()
 }
 
 function createRenameForm(starter) {

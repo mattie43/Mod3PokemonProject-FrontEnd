@@ -91,6 +91,7 @@ const getUsers = () => {
   fetch(baseurl+`users`)
   .then(resp => resp.json())
   .then(users => {
+    scoreboard.innerHTML = ''
     users.sort(function(a, b) {
       return b.score - a.score;
     }).forEach(user => {
