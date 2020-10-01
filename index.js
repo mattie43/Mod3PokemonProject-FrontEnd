@@ -101,7 +101,7 @@ function validMove(currentLocation, direction) {
     case '4':
       if(direction == 'Down'){return true}else{return false}
     case '5':
-      if(direction == 'Down'){return true}else{return 'north'}
+      if(direction == 'Down'){return true}else if(direction == 'Up'){return 'north'}else{return false}
     case '6':
       if(direction == 'Right' || direction == 'Down' || direction == 'Up'){return true}else{return false}
     case '7':
@@ -133,7 +133,7 @@ function validMove(currentLocation, direction) {
     case '20':
       if(direction == 'Up' || direction == 'Down' || direction == 'Left'){return true}else{return false}
     case '21':
-      if(direction == 'Right'){return true}else{return 'collapse'}
+      if(direction == 'Right'){return true}else if(direction == 'Left'){return 'collapse'}else{return false}
     case '22':
       if(direction == 'Right' || direction == 'Left'){return true}else{return false}
     case '23':
