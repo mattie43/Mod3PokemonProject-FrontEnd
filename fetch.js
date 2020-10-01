@@ -84,16 +84,17 @@ const getPokemonEvolution = (pokeName, pokemonObj, url) => {
     .then(resp => resp.json())
     .then(evolutionChain => {
       if(evolutionChain.chain.evolves_to[0].evolves_to[0]){
-        getPokemonEvolutionImg(pokeName, pokemonObj, evolutionChain.chain.evolves_to[0].evolves_to[0].species.name)
+        getPokemonEvolutionImg(pokeName, pokemonObj, evolutionChain.chain.evolves_to[0].evolves_to[0].species.name, 'to')
       }else{
-        displayPokemon(pokeName, pokemonObj)
+        getPokemonEvolutionImg(pokeName, pokemonObj, evolutionChain.chain.species.name, 'from')
+        // displayPokemon(pokeName, pokemonObj)
       }
     })
 }
-const getPokemonEvolutionImg = (pokeName, pokemonObj, evolutionName) => {
+const getPokemonEvolutionImg = (pokeName, pokemonObj, evolutionName, evoCheck) => {
   fetch(`https://pokeapi.co/api/v2/pokemon/${evolutionName}`)
     .then(resp => resp.json())
-    .then(evoPoke => displayPokemon(pokeName, pokemonObj, evolutionName, evoPoke.sprites.front_default))
+    .then(evoPoke => displayPokemon(pokeName, pokemonObj, evolutionName, evoPoke.sprites.front_default, evoCheck))
 }
 
 const userLogin = (name, continueGame) => {

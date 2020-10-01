@@ -142,20 +142,16 @@ function displayItem(itemName) {
   centerColumn.querySelector('#message').innerText = `You found a ${itemName}! Let's add it to your inventory!`
 }
 
-function displayPokemon(pokeName, pokemon, evoName, evoImg) {
+function displayPokemon(pokeName, pokemon, evoName, evoImg, evoCheck) {
   centerColumn.querySelector('#location-img').src = pokemon.sprites.front_default
   centerColumn.querySelector('#message').innerHTML = `
     <p>Name: ${pokeName} | Species: ${capitalize(pokemon.name)}</p>
     <p>Height: ${pokemon.height} | Weight: ${weightConversion(pokemon.weight)}kg | Type: ${capitalize(pokemon.types[0].type.name)} | 
     HP: ${pokemon.stats[0].base_stat} | Attack: ${pokemon.stats[1].base_stat} | Defense: ${pokemon.stats[2].base_stat}</p>
-    `
-  if(evoName){
-    centerColumn.querySelector('#message').innerHTML = centerColumn.querySelector('#message').innerHTML +
-    `<div class="evo-container">
-      <p>Evolves to: ${capitalize(evoName)}</p>
+    <div class="evo-container">
+      <p>Evolves ${evoCheck}: ${capitalize(evoName)}</p>
       <img src="${evoImg}">
     </div>`
-  }
 }
 
 function gameOverScreen() {
