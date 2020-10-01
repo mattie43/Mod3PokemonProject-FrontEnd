@@ -78,11 +78,11 @@ const userLogin = (name, continueGame) => {
   .then(resp => resp.json())
   .then(user => {
     if(continueGame){
+      logoImg.dataset.currentUser = user.id
       playerContinue(user)
-      logoImg.dataset.currentUser = user.id
     }else{
-      renderNewUser(user)
       logoImg.dataset.currentUser = user.id
+      renderNewUser(user)
     }
   })
 }

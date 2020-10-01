@@ -53,4 +53,6 @@ function addHP(healAmount) {
 function updateHP(damage) {
   const currentHP = leftColumn.querySelector('#hp-p').innerText
   leftColumn.querySelector('#hp-p').innerText = parseInt(currentHP) - damage
+
+  if(parseInt(leftColumn.querySelector('#hp-p').innerText) < 1){gameOverScreen(); return}
 }

@@ -119,8 +119,8 @@ function encounterCheck() {
     const damage = Math.floor(Math.random()*10)+1
     const newHP = parseInt(leftColumn.querySelector('#hp-p').innerText) - damage
     patchHP(newHP, currentUser)
-    updateHP(damage)
     failedMessage(`You tripped and fell! You took ${damage} damage!`)
+    updateHP(damage)
   }else{
     failedMessage("You didn't find anything of use here. Try exploring more!")
   }
@@ -140,4 +140,11 @@ function pokemonEncounter(pokemon) {
 
 function displayItem(itemName) {
   centerColumn.querySelector('#message').innerText = `You found a ${itemName}! Let's add it to your inventory!`
+}
+
+function gameOverScreen() {
+  centerColumn.innerHTML = `
+    <img class="game-over" id="location-img" src="./images/locations/game_over.jpg">
+    <p id="message">You have run out of HP and fallen. Your rank will stay on the scoreboard, but you cannot continue playing.</p>
+    `
 }

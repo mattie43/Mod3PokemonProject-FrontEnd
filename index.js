@@ -78,14 +78,16 @@ function playerContinue(user) {
     `
 
   leftColumn.querySelector('#hp-p').innerText = user.current_hp
-
+  
   for (const item of user.items) {
     addItem(item)
   }
-
+  
   for (const pokemon of user.pokemons) {
     addPokemon(pokemon.name, pokemon.species, pokemon.id, pokemon.img_url)
   }
+  
+  if(user.current_hp < 0){gameOverScreen(); return}
 }
 
 // Keeping this on the bottom because it's so long -----------------------------------------------------------------------------------------------------------------------
