@@ -53,5 +53,4 @@ function addHP(healAmount) {
 function updateHP(damage) {
   const currentHP = leftColumn.querySelector('#hp-p').innerText
   leftColumn.querySelector('#hp-p').innerText = parseInt(currentHP) - damage
-  failedMessage(`You tripped and fell! You took ${damage} damage!`)
 }

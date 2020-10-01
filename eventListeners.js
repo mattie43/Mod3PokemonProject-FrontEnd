@@ -7,12 +7,35 @@ document.addEventListener('keydown', e => {
 leftColumn.addEventListener('click', e => {
   if(e.target.id == 'hpup-li'){
     removeHpUp()
-  }else if(centerColumn.querySelector('#location-img').dataset.species && e.target.id.slice(-4) == 'ball'){
+  }else if(centerColumn.querySelector('#location-img').dataset.species && e.target.id.slice(-4) == 'ball' && centerColumn.querySelector('#rename-form').className == 'close'){
     if(e.target.querySelector('span').innerText.slice(1) == '0'){
       centerColumn.querySelector('#message').innerText = "You don't have anymore of those Poké Balls to try and capture it with!"
     }else{
       const pokemonEl = centerColumn.querySelector('#location-img')
+      const pokeBallCheck = e.target.id.slice(0,4)
+      const chance = Math.floor(Math.random()*10)+1
+      const damage = Math.floor(Math.random()*20)+1
       removeItem(e.target)
+      
+      if(pokeBallCheck == 'poke'){
+        if(chance > 4){
+          const newHP = parseInt(leftColumn.querySelector('#hp-p').innerText) - damage
+          patchHP(newHP, logoImg.dataset.currentUser)
+          updateHP(damage)
+          centerColumn.querySelector('#message').innerText = `You failed to catch ${pokemonEl.dataset.species}! They ran away and you took ${damage} damage!`
+          showCurrentLocation()
+          return       
+        }
+      }else if(pokeBallCheck == 'ultr'){
+        if(chance > 8){
+          const newHP = parseInt(leftColumn.querySelector('#hp-p').innerText) - damage
+          patchHP(newHP, logoImg.dataset.currentUser)
+          updateHP(damage)
+          centerColumn.querySelector('#message').innerText = `You failed to catch ${pokemonEl.dataset.species}! They ran away and you took ${damage} damage!`
+          showCurrentLocation()
+          return
+        }        
+      }
       centerColumn.querySelector('#message').innerText = `You successfully caught ${pokemonEl.dataset.species}!`
       showRenameForm(pokemonEl.dataset.species, pokemonEl.dataset.id)
     }

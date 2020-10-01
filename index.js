@@ -6,8 +6,31 @@ const scoreboard = document.querySelector('#scoreboard-ol')
 const logoImg = document.querySelector('.logo-img')
 const baseurl = "http://localhost:3000/"
 const locationNames = {
-  1: 'Viridan Forest',
-  2: ''
+  1: 'Viridian Forest NW',
+  2: 'Viridian Forest NE',
+  3: 'Pokemon Towers F2',
+  4: 'Power Plant F1',
+  5: 'Lost Ruins',
+  6: 'Viridian Forest SW',
+  7: 'Viridian Forest SE',
+  8: 'Pokemon Towers F1',
+  9: 'Power Plant',
+  10: 'Abandoned Road',
+  11: 'Viridian Forest Birdhouse',
+  12: 'Western Road',
+  13: 'Pallet Town Center',
+  14: 'Eastern Road',
+  15: 'Victory Road Entrance',
+  16: "Inside Diglett's Cave",
+  17: "Diglett's Cave",
+  18: 'Rock Cave Entrance W',
+  19: 'Country Road',
+  20: 'Rock Cave Entrance E',
+  21: 'Rock Cave Collapse',
+  22: 'Rock Cave W',
+  23: 'Rock Cave S',
+  24: 'Rock Cave E',
+  25: 'Rock Cave Tunnel',
 }
 
 // Helper functions------------------------------------------------
@@ -32,7 +55,7 @@ function between(x, min, max) {
 
 function newPlayerStart() {
   const locationP = leftColumn.querySelector('#location-p')
-  locationP.innerText = 'Pallet Town Center'
+  locationP.innerText = locationNames[13]
   locationP.dataset.location = 13
   centerColumn.innerHTML = `
     <img id="location-img" src="./images/locations/img_13.png">
@@ -47,7 +70,7 @@ function newPlayerStart() {
 
 function playerContinue(user) {
   const locationP = leftColumn.querySelector('#location-p')
-  locationP.innerText = 'Pallet Town Center'
+  locationP.innerText = locationNames[13]
   locationP.dataset.location = 13
   centerColumn.innerHTML = `
     <img id="location-img" src="./images/locations/img_13.png">
@@ -110,7 +133,7 @@ function validMove(currentLocation, direction) {
     case '20':
       if(direction == 'Up' || direction == 'Down' || direction == 'Left'){return true}else{return false}
     case '21':
-      if(direction == 'Right'){return true}else{return false}
+      if(direction == 'Right'){return true}else{return 'collapse'}
     case '22':
       if(direction == 'Right' || direction == 'Left'){return true}else{return false}
     case '23':

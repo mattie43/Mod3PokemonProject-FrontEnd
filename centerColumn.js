@@ -60,12 +60,19 @@ function moveLocation(direction) {
   const valid = validMove(locationP.dataset.location, direction)
   if(valid == false){
     failedMessage('That is not a valid move, try another direction!')
+    showCurrentLocation()
     return
   }else if(valid == 'victory'){
     failedMessage("You're not ready to head down Victroy Road!")
+    showCurrentLocation()
     return
   }else if(valid == 'north'){
     failedMessage("You're not allowed in that city!")
+    showCurrentLocation()
+    return
+  }else if(valid == 'collapse'){
+    failedMessage("The cave has collapsed! You can't venture any deeper!")
+    showCurrentLocation()
     return
   }
 
@@ -81,6 +88,7 @@ function moveLocation(direction) {
   }  
 
   locationP.dataset.location = parseInt(locationP.dataset.location) + num
+  locationP.innerText = locationNames[locationP.dataset.location]
   centerColumn.querySelector('#location-img').src = `./images/locations/img_${locationP.dataset.location}.png`
 
   encounterCheck()
@@ -93,26 +101,24 @@ function failedMessage(message) {
 function encounterCheck() {
   const num = Math.floor(Math.random()*100)+1
   const currentUser = logoImg.dataset.currentUser
-  if(between(num, 1, 15)){
+  if(between(num, 1, 20)){
     getRandomPokemon()
-  }else if(between(num, 16, 17)){
+  }else if(num == 22){
     postItem('master-ball', currentUser)
-  }else if(between(num, 20, 29)){
+  }else if(between(num, 23, 33)){
     postItem('poke-ball', currentUser)
-  }else if(between(num, 30, 35)){
+  }else if(between(num, 34, 37)){
     postItem('ultra-ball', currentUser)
   }else if(between(num, 40, 49)){
     postItem('hp-up', currentUser)
   }else if(between(num, 50, 51)){
     postItem('health-wing', currentUser)
-  }else if(between(num, 52, 80)){
-    const newHP = parseInt(leftColumn.querySelector('#hp-p').innerText) - 15
+  }else if(between(num, 52, 55)){
+    const damage = Math.floor(Math.random()*10)+1
+    const newHP = parseInt(leftColumn.querySelector('#hp-p').innerText) - damage
     patchHP(newHP, currentUser)
-    updateHP(15)
-  }else if(between(num, 81, 90)){
-    const newHP = parseInt(leftColumn.querySelector('#hp-p').innerText) - 40
-    patchHP(newHP, currentUser)
-    updateHP(40)
+    updateHP(damage)
+    failedMessage(`You tripped and fell! You took ${damage} damage!`)
   }else{
     failedMessage("You didn't find anything of use here. Try exploring more!")
   }
