@@ -51,6 +51,10 @@ function between(x, min, max) {
   return x >= min && x <= max
 }
 
+function weightConversion(weight){
+  return weight.toString().slice(0, -1)
+}
+
 // Global Functions -------------------------------------------------------------------------------------------------------------------------------------------------
 
 function newPlayerStart() {
@@ -86,7 +90,7 @@ function playerContinue(user) {
   for (const pokemon of user.pokemons) {
     addPokemon(pokemon.name, pokemon.species, pokemon.id, pokemon.img_url)
   }
-  
+
   if(user.current_hp < 0){gameOverScreen(); return}
 }
 

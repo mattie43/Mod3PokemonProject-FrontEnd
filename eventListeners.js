@@ -5,9 +5,7 @@ document.addEventListener('keydown', e => {
 })
 
 leftColumn.addEventListener('click', e => {
-  if(e.target.id == 'hpup-li'){
-    removeHpUp()
-  }else if(centerColumn.querySelector('#location-img').dataset.species && e.target.id.slice(-4) == 'ball' && centerColumn.querySelector('#rename-form').className == 'close'){
+  if(centerColumn.querySelector('#location-img').dataset.species && e.target.id.slice(-4) == 'ball' && centerColumn.querySelector('#rename-form').className == 'close'){
     if(e.target.querySelector('span').innerText.slice(1) == '0'){
       centerColumn.querySelector('#message').innerText = "You don't have anymore of those Poké Balls to try and capture it with!"
     }else{
@@ -46,6 +44,8 @@ leftColumn.addEventListener('click', e => {
       if(e.target.id.slice(0,2) == 'hp'){addHP(20)}else{addHP(40)}
       removeItem(e.target)
     }
+  }else if(e.target.dataset.id){
+    getPokemonFromDB(e.target.dataset.id)
   }
 })
 
@@ -62,9 +62,9 @@ centerColumn.addEventListener('submit', e => {
     }
   }else if(e.target.id == 'starter-form'){
     newPlayerStart()
-    postPokemon(e.target.name.value, e.target.dataset.species, e.target.dataset.id, logoImg.dataset.currentUser)
+    postPokemon(e.target.name.value, e.target.dataset.species, logoImg.dataset.currentUser)
   }else if(e.target.id == 'rename-form'){
-    postPokemon(e.target.name.value, e.target.dataset.species, e.target.dataset.id, logoImg.dataset.currentUser)
+    postPokemon(e.target.name.value, e.target.dataset.species, logoImg.dataset.currentUser)
     showCurrentLocation()
     e.target.remove()
   }

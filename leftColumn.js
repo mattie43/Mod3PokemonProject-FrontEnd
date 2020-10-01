@@ -9,6 +9,7 @@ function addPokemon(pokemonName, pokemonSpecies, pokemonId, pokemonImg) {
   pokeLi.dataset.id = pokemonId
 
   pokeImg.src = pokemonImg
+  pokeImg.dataset.id = pokemonId
 
   pokeDiv.classList = 'container'
 

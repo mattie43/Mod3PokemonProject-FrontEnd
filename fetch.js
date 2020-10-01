@@ -47,7 +47,7 @@ const getRandomPokemon = () => {
     .then(data => pokemonEncounter(data))
 }
 
-const postPokemon = (name, species, pokeId, userId) => {
+const postPokemon = (name, species, userId) => {
   let options = {
     method: "POST",
     headers: {"content-type": "application/json",
@@ -61,7 +61,18 @@ const postPokemon = (name, species, pokeId, userId) => {
 
   fetch(baseurl + `pokemons/`, options)
   .then(resp => resp.json())
-  .then(pokemon => addPokemon(pokemon.name, pokemon.species, pokeId, pokemon.img_url))
+  .then(pokemon => addPokemon(pokemon.name, pokemon.species, pokemon.id, pokemon.img_url))
+}
+
+const getPokemonFromDB = (pokeId) => {
+  fetch(baseurl + `pokemons/${pokeId}`)
+    .then(resp => resp.json())
+    .then(pokemon => getPokemon(pokemon.name, pokemon.species))
+}
+const getPokemon = (pokeName, pokeSpecies) => {
+  fetch(`https://pokeapi.co/api/v2/pokemon/${pokeSpecies}`)
+    .then(resp => resp.json())
+    .then(pokemon => displayPokemon(pokeName, pokemon))
 }
 
 const userLogin = (name, continueGame) => {
