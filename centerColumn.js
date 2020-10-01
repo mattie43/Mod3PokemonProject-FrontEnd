@@ -144,13 +144,12 @@ function displayItem(itemName) {
 
 function displayPokemon(pokeName, pokemon) {
   centerColumn.querySelector('#location-img').src = pokemon.sprites.front_default
-  getPokemonEvolution(pokemon.species)
+  // getPokemonEvolution?
   centerColumn.querySelector('#message').innerHTML = `
     <p>Name: ${pokeName} | Species: ${capitalize(pokemon.name)}</p>
     <p>Height: ${pokemon.height} | Weight: ${weightConversion(pokemon.weight)}kg | Type: ${capitalize(pokemon.types[0].type.name)}</p>
     <p>HP: ${pokemon.stats[0].base_stat} | Attack: ${pokemon.stats[1].base_stat} | Defense: ${pokemon.stats[2].base_stat}</p>
-    `
-  
+    `  
 }
 
 function gameOverScreen() {
