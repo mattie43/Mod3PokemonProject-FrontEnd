@@ -28,11 +28,13 @@ const patchHP = (newHP, userId) => {
     fetch(baseurl + `users/${userId}`, options)
 }
 
-const deleteItem = (itemId) => {
+const deleteItem = (itemId, userId) => {
   let options = {
       method: "DELETE",
       headers: {"content-type": "application/json",
-                "accept": "application/json" }
+                "accept": "application/json" },
+      body: JSON.stringify({api_id: itemId,
+                            user_id: userId})
       }
 
     fetch(baseurl + `items/${itemId}`, options)

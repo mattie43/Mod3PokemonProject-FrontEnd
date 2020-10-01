@@ -34,7 +34,7 @@ function removeItem(itemEl) {
   const currentAmount = itemEl.querySelector('span').innerText.slice(1)
   itemEl.querySelector('span').innerText = 'x' + (parseInt(currentAmount) - 1)
   if(itemEl.querySelector('span').innerText.slice(1) == '0'){itemEl.remove()}
-  deleteItem(itemEl.id)
+  deleteItem(itemEl.id, logoImg.dataset.currentUser)
 }
 
 function addHP(healAmount) {
