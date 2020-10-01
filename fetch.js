@@ -72,7 +72,28 @@ const getPokemonFromDB = (pokeId) => {
 const getPokemon = (pokeName, pokeSpecies) => {
   fetch(`https://pokeapi.co/api/v2/pokemon/${pokeSpecies}`)
     .then(resp => resp.json())
-    .then(pokemon => displayPokemon(pokeName, pokemon))
+    .then(pokemon => getPokemonSpecies(pokeName, pokemon))
+}
+const getPokemonSpecies = (pokeName, pokemonObj) => {
+  fetch(`https://pokeapi.co/api/v2/pokemon-species/${pokemonObj.name}`)
+    .then(resp => resp.json())
+    .then(species => getPokemonEvolution(pokeName, pokemonObj, species.evolution_chain.url))
+}
+const getPokemonEvolution = (pokeName, pokemonObj, url) => {
+  fetch(url)
+    .then(resp => resp.json())
+    .then(evolutionChain => {
+      if(evolutionChain.chain.evolves_to[0].evolves_to[0]){
+        getPokemonEvolutionImg(pokeName, pokemonObj, evolutionChain.chain.evolves_to[0].evolves_to[0].species.name)
+      }else{
+        displayPokemon(pokeName, pokemonObj)
+      }
+    })
+}
+const getPokemonEvolutionImg = (pokeName, pokemonObj, evolutionName) => {
+  fetch(`https://pokeapi.co/api/v2/pokemon/${evolutionName}`)
+    .then(resp => resp.json())
+    .then(evoPoke => displayPokemon(pokeName, pokemonObj, evolutionName, evoPoke.sprites.front_default))
 }
 
 const userLogin = (name, continueGame) => {

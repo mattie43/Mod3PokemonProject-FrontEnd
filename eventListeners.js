@@ -44,7 +44,7 @@ leftColumn.addEventListener('click', e => {
       if(e.target.id.slice(0,2) == 'hp'){addHP(20)}else{addHP(40)}
       removeItem(e.target)
     }
-  }else if(e.target.dataset.id){
+  }else if(e.target.dataset.id && !centerColumn.querySelector('.game-over')){
     getPokemonFromDB(e.target.dataset.id)
   }
 })
