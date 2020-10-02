@@ -118,7 +118,7 @@ function encounterCheck() {
   }else if(between(num, 50, 51)){
     postItem('health-wing', currentUser)
   }else if(between(num, 52, 55)){
-    const damage = Math.floor(Math.random()*10)+1
+    const damage = Math.floor(Math.random()*20)+1
     const newHP = parseInt(leftColumn.querySelector('#hp-p').innerText) - damage
     patchHP(newHP, currentUser)
     failedMessage(`You tripped and fell! You took ${damage} damage!`)
@@ -150,7 +150,7 @@ function displayPokemon(pokeName, pokemon, evoName, evoImg, evoCheck) {
   centerColumn.querySelector('#location-img').src = pokemon.sprites.front_default
   centerColumn.querySelector('#message').innerHTML = `
     <p>Name: ${pokeName} | Species: ${capitalize(pokemon.name)}</p>
-    <p>Height: ${pokemon.height} | Weight: ${weightConversion(pokemon.weight)}kg | Type: ${capitalize(pokemon.types[0].type.name)} | 
+    <p>Height: ${decimalNum(pokemon.height)}m | Weight: ${decimalNum(pokemon.weight)}kg | Type: ${capitalize(pokemon.types[0].type.name)} | 
     HP: ${pokemon.stats[0].base_stat} | Attack: ${pokemon.stats[1].base_stat} | Defense: ${pokemon.stats[2].base_stat}</p>
     <div class="evo-container">
       <p>Evolves ${evoCheck}: ${capitalize(evoName)}</p>

@@ -64,6 +64,7 @@ const postPokemon = (name, species, userId) => {
   .then(pokemon => addPokemon(pokemon.name, pokemon.species, pokemon.id, pokemon.img_url))
 }
 
+// Long chain of fetch's to get pokemon's evolution
 const getPokemonFromDB = (pokeId) => {
   fetch(baseurl + `pokemons/${pokeId}`)
     .then(resp => resp.json())
@@ -83,8 +84,12 @@ const getPokemonEvolution = (pokeName, pokemonObj, url) => {
   fetch(url)
     .then(resp => resp.json())
     .then(evolutionChain => {
-      if(evolutionChain.chain.evolves_to[0].evolves_to[0] && pokemonObj.name != evolutionChain.chain.evolves_to[0].evolves_to[0].species.name){
+      if(pokemonObj.name == evolutionChain.chain.species.name){
+        getPokemonEvolutionImg(pokeName, pokemonObj, evolutionChain.chain.evolves_to[0].species.name, 'to')
+      }else if(pokemonObj.name == evolutionChain.chain.evolves_to[0].species.name){
         getPokemonEvolutionImg(pokeName, pokemonObj, evolutionChain.chain.evolves_to[0].evolves_to[0].species.name, 'to')
+      }else if(evolutionChain.chain.evolves_to[0].species.name){
+        getPokemonEvolutionImg(pokeName, pokemonObj, evolutionChain.chain.evolves_to[0].species.name, 'from')
       }else{
         getPokemonEvolutionImg(pokeName, pokemonObj, evolutionChain.chain.species.name, 'from')
       }

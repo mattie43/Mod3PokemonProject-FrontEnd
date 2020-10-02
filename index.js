@@ -51,8 +51,8 @@ function between(x, min, max) {
   return x >= min && x <= max
 }
 
-function weightConversion(weight){
-  return weight.toString().slice(0, -1)
+function decimalNum(num){
+  return num.toString().slice(0, -1) + '.' + num.toString().slice(-1)
 }
 
 // Global Functions -------------------------------------------------------------------------------------------------------------------------------------------------
