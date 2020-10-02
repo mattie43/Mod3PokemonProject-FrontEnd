@@ -12,7 +12,7 @@
   border-radius: 5px;
 }
 
-body {
+html, body {
   background-color: var(--pokemon-blue);
 }
 
@@ -22,8 +22,10 @@ body {
   margin: 10px;
   background: #565c63;
   border: 2px solid var(--pokemon-yellow);
-  margin-top: 100px;
-  margin-bottom: 100px;
+
+  /* halved the margin to fix scrollbar issue */
+  margin-top: 50px;
+  margin-bottom: 50px;
 }
 
 .col {
@@ -212,9 +214,8 @@ ul {
   max-height: 9vh;
 }
 #inventory-ul {
-  overflow-y: initial;
-  overflow-x: visible;
-  max-height: 9vh;
+  overflow: visible;
+  max-height: 14vh;
 }
 
 .evo-container {
@@ -303,7 +304,7 @@ ul {
     margin: auto;
     height: 1px;
     z-index: -1;
-    background: gold;
+    background: var(--pokemon-yellow);
     border-radius: 100%;
   }
   100% {

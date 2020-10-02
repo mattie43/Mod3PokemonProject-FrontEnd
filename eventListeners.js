@@ -1,5 +1,9 @@
 document.addEventListener('keydown', e => {
   if(leftColumn.innerText != 'Log in first!' && !centerColumn.querySelector('.game-over') && e.key.slice(0, 5) == 'Arrow'){
+    if(centerColumn.querySelector('#location-img').dataset.species){
+      centerColumn.querySelector('#location-img').removeAttribute("data-species")
+      runAwayMusicTrigger()
+    }
     moveLocation(e.key.slice(5))
   }
 })
@@ -15,42 +19,30 @@ leftColumn.addEventListener('click', e => {
       const damage = Math.floor(Math.random()*30)+1
       removeItem(e.target)
       
-      if(pokeBallCheck == 'poke'){
-        if(chance > 4){
-          stopAllMusic();
-          playPalletMusic();
-          const newHP = parseInt(leftColumn.querySelector('#hp-p').innerText) - damage
-          patchHP(newHP, logoImg.dataset.currentUser)
-          centerColumn.querySelector('#message').innerText = `You failed to catch ${pokemonEl.dataset.species}! They ran away and you took ${damage} damage!`
-          showCurrentLocation()
-          updateHP(damage)
-          return       
-        }
-      }else if(pokeBallCheck == 'ultr'){
-        if(chance > 8){
-          stopAllMusic();
-          playPalletMusic();
-          const newHP = parseInt(leftColumn.querySelector('#hp-p').innerText) - damage
-          patchHP(newHP, logoImg.dataset.currentUser)
-          updateHP(damage)
-          centerColumn.querySelector('#message').innerText = `You failed to catch ${pokemonEl.dataset.species}! They ran away and you took ${damage} damage!`
-          showCurrentLocation()
-          return
-        }        
+      if(pokeBallCheck == 'poke' && chance > 4){
+        console.log('30%', chance)
+        centerColumn.querySelector('#message').innerText = `You successfully caught ${pokemonEl.dataset.species}!`
+        showRenameForm(pokemonEl.dataset.species, pokemonEl.dataset.id)
+        return  
+      }else if(pokeBallCheck == 'ultr' && chance > 8){
+        console.log('70%', chance)
+        centerColumn.querySelector('#message').innerText = `You successfully caught ${pokemonEl.dataset.species}!`
+        showRenameForm(pokemonEl.dataset.species, pokemonEl.dataset.id)
+        return  
+      }else if(pokeBallCheck == 'mast'){
+        console.log('100%', chance)
+        centerColumn.querySelector('#message').innerText = `You successfully caught ${pokemonEl.dataset.species}!`
+        showRenameForm(pokemonEl.dataset.species, pokemonEl.dataset.id)
+        return
       }
-      else 
-        if(chance > 8){
-          stopAllMusic();
-          playPalletMusic();
-          const newHP = parseInt(leftColumn.querySelector('#hp-p').innerText) - damage
-          patchHP(newHP, logoImg.dataset.currentUser)
-          updateHP(damage)
-          centerColumn.querySelector('#message').innerText = `You failed to catch ${pokemonEl.dataset.species}! They ran away and you took ${damage} damage!`
-          showCurrentLocation()
-          return
-        }
-      centerColumn.querySelector('#message').innerText = `You successfully caught ${pokemonEl.dataset.species}!`
-      showRenameForm(pokemonEl.dataset.species, pokemonEl.dataset.id)
+      console.log('failure')
+      stopAllMusic();
+      playPalletMusic();
+      showCurrentLocation()
+      centerColumn.querySelector('#message').innerText = `You failed to catch ${pokemonEl.dataset.species}! They ran away and you took ${damage} damage!`
+      const newHP = parseInt(leftColumn.querySelector('#hp-p').innerText) - damage
+      patchHP(newHP, logoImg.dataset.currentUser)
+      updateHP(damage)
     }
   }else if(e.target.id.slice(0,2) == 'hp' && !centerColumn.querySelector('.game-over') || e.target.id.slice(0,6) == 'health' && !centerColumn.querySelector('.game-over')){
     if(leftColumn.querySelector('#hp-p').innerText == '100'){

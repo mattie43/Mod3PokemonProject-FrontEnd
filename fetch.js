@@ -68,27 +68,30 @@ const postPokemon = (name, species, userId) => {
 const getPokemonFromDB = (pokeId) => {
   fetch(baseurl + `pokemons/${pokeId}`)
     .then(resp => resp.json())
-    .then(pokemon => getPokemon(pokemon.name, pokemon.species))
+    .then(pokemon => {getPokemon(pokemon.name, pokemon.species); console.log('chain1')})
 }
 const getPokemon = (pokeName, pokeSpecies) => {
   fetch(`https://pokeapi.co/api/v2/pokemon/${pokeSpecies}`)
     .then(resp => resp.json())
-    .then(pokemon => getPokemonSpecies(pokeName, pokemon))
+    .then(pokemon => {getPokemonSpecies(pokeName, pokemon); console.log('chain2')})
 }
 const getPokemonSpecies = (pokeName, pokemonObj) => {
   fetch(`https://pokeapi.co/api/v2/pokemon-species/${pokemonObj.name}`)
     .then(resp => resp.json())
-    .then(species => getPokemonEvolution(pokeName, pokemonObj, species.evolution_chain.url))
+    .then(species => {getPokemonEvolution(pokeName, pokemonObj, species.evolution_chain.url); console.log('chain3')})
 }
 const getPokemonEvolution = (pokeName, pokemonObj, url) => {
   fetch(url)
     .then(resp => resp.json())
     .then(evolutionChain => {
-      if(pokemonObj.name == evolutionChain.chain.species.name){
+      console.log('chain4')
+      if(pokemonObj.name == 'mew' || pokemonObj.name == 'mewtwo'){
+        displayPokemon(pokeName, pokemonObj)
+      }else if(pokemonObj.name == evolutionChain.chain.species.name){
         getPokemonEvolutionImg(pokeName, pokemonObj, evolutionChain.chain.evolves_to[0].species.name, 'to')
-      }else if(pokemonObj.name == evolutionChain.chain.evolves_to[0].species.name){
+      }else if((pokemonObj.name == evolutionChain.chain.evolves_to[0].species.name) && (evolutionChain.chain.evolves_to[0].evolves_to[0] != undefined)){
         getPokemonEvolutionImg(pokeName, pokemonObj, evolutionChain.chain.evolves_to[0].evolves_to[0].species.name, 'to')
-      }else if(evolutionChain.chain.evolves_to[0].species.name){
+      }else if(evolutionChain.chain.evolves_to[0].species.name && (pokemonObj.name != evolutionChain.chain.evolves_to[0].species.name)){
         getPokemonEvolutionImg(pokeName, pokemonObj, evolutionChain.chain.evolves_to[0].species.name, 'from')
       }else{
         getPokemonEvolutionImg(pokeName, pokemonObj, evolutionChain.chain.species.name, 'from')
@@ -98,7 +101,7 @@ const getPokemonEvolution = (pokeName, pokemonObj, url) => {
 const getPokemonEvolutionImg = (pokeName, pokemonObj, evolutionName, evoCheck) => {
   fetch(`https://pokeapi.co/api/v2/pokemon/${evolutionName}`)
     .then(resp => resp.json())
-    .then(evoPoke => displayPokemon(pokeName, pokemonObj, evolutionName, evoPoke.sprites.front_default, evoCheck))
+    .then(evoPoke => {displayPokemon(pokeName, pokemonObj, evolutionName, evoPoke.sprites.front_default, evoCheck); console.log('chain5')})
 }
 
 const userLogin = (name, continueGame) => {

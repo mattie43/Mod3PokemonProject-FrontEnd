@@ -102,6 +102,11 @@ function failedMessage(message) {
   centerColumn.querySelector('#message').innerText = message
 }
 
+function runAwayMusicTrigger() {
+  stopAllMusic()
+  playPalletMusic()
+}
+
 function encounterCheck() {
   const num = Math.floor(Math.random()*100)+1
   const currentUser = logoImg.dataset.currentUser
@@ -131,8 +136,7 @@ function encounterCheck() {
 function pokemonEncounter(pokemon) {
   stopAllMusic();
   playBattleMusic();
-  const capitalName = pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
-  centerColumn.querySelector('#message').innerText = `You found ${capitalName}! Try and capture it with one of your Poké Balls, or run away!`
+  centerColumn.querySelector('#message').innerText = `You found ${capitalize(pokemon.name)}! Try and capture it with one of your Poké Balls, or run away!`
 
   const locationImg = centerColumn.querySelector('#location-img')
   locationImg.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`
@@ -151,11 +155,15 @@ function displayPokemon(pokeName, pokemon, evoName, evoImg, evoCheck) {
   centerColumn.querySelector('#message').innerHTML = `
     <p>Name: ${pokeName} | Species: ${capitalize(pokemon.name)}</p>
     <p>Height: ${decimalNum(pokemon.height)}m | Weight: ${decimalNum(pokemon.weight)}kg | Type: ${capitalize(pokemon.types[0].type.name)} | 
-    HP: ${pokemon.stats[0].base_stat} | Attack: ${pokemon.stats[1].base_stat} | Defense: ${pokemon.stats[2].base_stat}</p>
-    <div class="evo-container">
-      <p>Evolves ${evoCheck}: ${capitalize(evoName)}</p>
-      <img src="${evoImg}">
-    </div>`
+    HP: ${pokemon.stats[0].base_stat} | Attack: ${pokemon.stats[1].base_stat} | Defense: ${pokemon.stats[2].base_stat}</p>`
+
+  if(pokeName != 'mew' || pokeName != 'mewtwo'){
+    centerColumn.querySelector('#message').innerHTML += `
+      <div class="evo-container">
+        <p>Evolves ${evoCheck}: ${capitalize(evoName)}</p>
+        <img src="${evoImg}">
+      </div>`
+  }
 }
 
 function gameOverScreen() {
