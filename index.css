@@ -138,9 +138,6 @@ ul {
   cursor: pointer;
 }
 
-.inventory-sprite {
-  height: 3vh;
-}
 
 .btn-primary {
   border-width: 2px;
@@ -215,7 +212,8 @@ ul {
   max-height: 9vh;
 }
 #inventory-ul {
-  overflow: auto;
+  overflow-y: initial;
+  overflow-x: visible;
   max-height: 9vh;
 }
 
@@ -225,4 +223,99 @@ ul {
   justify-content: center;
   margin: -20px;
   /* flex-direction: column; */
+}
+
+/* click effect */
+.inv-item {
+  padding: 0 0.4em;
+  cursor: help;
+  font-style: normal;
+  position: relative;
+  
+}
+.inv-item:after {
+  content: attr(data-info);
+  display: inline;
+  position: absolute;
+  top: 22px; left: 0;
+  opacity: 0;
+  width: 230px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.5em;
+  padding: 0.5em 0.8em;
+  background: rgba(0,0,0,0.8);
+  color: #fff;
+  pointer-events: none; /* This prevents the box from apearing when hovered. */
+  transition: opacity 250ms, top 250ms;
+}
+.inv-item:before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 12px; left: 20px;
+  opacity: 0;
+  width: 0; height: 0;
+  border: solid transparent 5px;
+  border-bottom-color: rgba(0,0,0,0.8);
+  transition: opacity 250ms, top 250ms;
+}
+.inv-item:hover {z-index: 2;} /* Keeps the info boxes on top of other elements */
+.inv-item:hover::after,
+.inv-item:hover::before {opacity: 1;}
+.inv-item:hover::after {top: 30px;}
+.inv-item:hover::before {top: 20px;}
+
+/* pokemon */
+
+.poke-container {
+  border-radius: 10px;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+.poke-container:after {
+  display: block;
+  position: absolute;
+  margin: 0;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  content: '.';
+  color: transparent;
+  width: 1px;
+  height: 1px;
+  border-radius: 50%;
+  background: transparent;
+}
+.poke-container:hover:after {
+  -webkit-animation: circle 1.5s ease-in forwards;
+}
+
+@-webkit-keyframes circle {
+  0% {
+    width: 1px;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    margin: auto;
+    height: 1px;
+    z-index: -1;
+    background: gold;
+    border-radius: 100%;
+  }
+  100% {
+    background: orange;
+    height: 5000%;
+    width: 5000%;
+    z-index: -1;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    border-radius: 0;
+  }
 }

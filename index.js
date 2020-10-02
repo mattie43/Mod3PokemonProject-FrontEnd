@@ -56,8 +56,12 @@ function weightConversion(weight){
 }
 
 // Global Functions -------------------------------------------------------------------------------------------------------------------------------------------------
-
+const checkHp = () => {
+  
+}
 function newPlayerStart() {
+  stopAllMusic();
+  playPalletMusic();
   const locationP = leftColumn.querySelector('#location-p')
   locationP.innerText = locationNames[13]
   locationP.dataset.location = 13

@@ -9,6 +9,8 @@ function showRenameForm(pokemonSpecies, pokemonId) {
   renameLabel.parentNode.parentNode.dataset.species = pokemonSpecies
   renameLabel.parentNode.parentNode.dataset.id = pokemonId
 
+  stopAllMusic()
+  playSuccessMusic()
   getUsers()
 }
 
@@ -127,6 +129,8 @@ function encounterCheck() {
 }
 
 function pokemonEncounter(pokemon) {
+  stopAllMusic();
+  playBattleMusic();
   const capitalName = pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
   centerColumn.querySelector('#message').innerText = `You found ${capitalName}! Try and capture it with one of your Poké Balls, or run away!`
 
@@ -156,7 +160,9 @@ function displayPokemon(pokeName, pokemon, evoName, evoImg, evoCheck) {
 
 function gameOverScreen() {
   centerColumn.innerHTML = `
-    <img class="game-over" id="location-img" src="./images/locations/game_over.jpg">
+    <img class="game-over" id="location-img" src="./images/locations/gameover.jpg">
     <p id="message">You have run out of HP and fallen. Your rank will stay on the scoreboard, but you cannot continue playing.</p>
     `
+  stopAllMusic();
+  playGameOverMusic();
 }

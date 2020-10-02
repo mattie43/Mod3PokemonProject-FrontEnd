@@ -17,6 +17,8 @@ leftColumn.addEventListener('click', e => {
       
       if(pokeBallCheck == 'poke'){
         if(chance > 4){
+          stopAllMusic();
+          playPalletMusic();
           const newHP = parseInt(leftColumn.querySelector('#hp-p').innerText) - damage
           patchHP(newHP, logoImg.dataset.currentUser)
           centerColumn.querySelector('#message').innerText = `You failed to catch ${pokemonEl.dataset.species}! They ran away and you took ${damage} damage!`
@@ -26,6 +28,8 @@ leftColumn.addEventListener('click', e => {
         }
       }else if(pokeBallCheck == 'ultr'){
         if(chance > 8){
+          stopAllMusic();
+          playPalletMusic();
           const newHP = parseInt(leftColumn.querySelector('#hp-p').innerText) - damage
           patchHP(newHP, logoImg.dataset.currentUser)
           updateHP(damage)
@@ -34,6 +38,17 @@ leftColumn.addEventListener('click', e => {
           return
         }        
       }
+      else 
+        if(chance > 8){
+          stopAllMusic();
+          playPalletMusic();
+          const newHP = parseInt(leftColumn.querySelector('#hp-p').innerText) - damage
+          patchHP(newHP, logoImg.dataset.currentUser)
+          updateHP(damage)
+          centerColumn.querySelector('#message').innerText = `You failed to catch ${pokemonEl.dataset.species}! They ran away and you took ${damage} damage!`
+          showCurrentLocation()
+          return
+        }
       centerColumn.querySelector('#message').innerText = `You successfully caught ${pokemonEl.dataset.species}!`
       showRenameForm(pokemonEl.dataset.species, pokemonEl.dataset.id)
     }
@@ -55,15 +70,19 @@ centerColumn.addEventListener('submit', e => {
   if(e.target.className == 'login-form'){
     if(nameExists(e.target.username.value)){
       userLogin(e.target.username.value, true)
+      playPalletMusic();
       showCurrentLocation()
     }else{
       userLogin(e.target.username.value)
+      playOpeningMusic();
       chooseStartingPokemon()
     }
   }else if(e.target.id == 'starter-form'){
     newPlayerStart()
     postPokemon(e.target.name.value, e.target.dataset.species, logoImg.dataset.currentUser)
   }else if(e.target.id == 'rename-form'){
+    stopAllMusic()
+    playPalletMusic()
     postPokemon(e.target.name.value, e.target.dataset.species, logoImg.dataset.currentUser)
     showCurrentLocation()
     e.target.remove()

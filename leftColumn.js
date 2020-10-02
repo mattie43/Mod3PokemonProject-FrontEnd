@@ -11,7 +11,7 @@ function addPokemon(pokemonName, pokemonSpecies, pokemonId, pokemonImg) {
   pokeImg.src = pokemonImg
   pokeImg.dataset.id = pokemonId
 
-  pokeDiv.classList = 'container'
+  pokeDiv.classList = 'poke-container'
 
   pokeDiv.append(pokeLi)
   pokeDiv.append(pokeImg)
@@ -26,6 +26,8 @@ function addItem(item) {
     const newLi = document.createElement('li')
     newLi.id = item.api_id
     newLi.dataset.dbId = item.id
+    newLi.dataset.info = item.effect
+    newLi.className = "inv-item"
     newLi.innerHTML = `<img src="${item.img_url}" class="inventory-sprite"> ${item.name} <span id="${item.api_id}-amount">x${item.amount}</span>`
     leftColumn.querySelector('#inventory-ul').append(newLi)
   }
