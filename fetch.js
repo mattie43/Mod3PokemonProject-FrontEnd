@@ -64,6 +64,7 @@ const postPokemon = (name, species, userId) => {
   .then(pokemon => addPokemon(pokemon.name, pokemon.species, pokemon.id, pokemon.img_url))
 }
 
+// Long chain of fetch's to get pokemon's evolution
 const getPokemonFromDB = (pokeId) => {
   fetch(baseurl + `pokemons/${pokeId}`)
     .then(resp => resp.json())
