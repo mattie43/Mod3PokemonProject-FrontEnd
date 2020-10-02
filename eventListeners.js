@@ -66,7 +66,7 @@ centerColumn.addEventListener('submit', e => {
       showCurrentLocation()
     }else{
       userLogin(e.target.username.value)
-      playOpeningMusic();
+      // playOpeningMusic();
       chooseStartingPokemon()
     }
   }else if(e.target.id == 'starter-form'){

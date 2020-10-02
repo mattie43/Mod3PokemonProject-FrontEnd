@@ -16,6 +16,7 @@ const playOpeningMusic = () => {
     audio1.play()
 }
 
+
 const playPalletMusic = () => {
     music.innerHTML = `<audio id="pallet-music" loop ><source src="music/pal.mp3" type="audio/mp3"></audio>`
     audio1 = document.querySelector("#pallet-music")

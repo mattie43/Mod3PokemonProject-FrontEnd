@@ -141,7 +141,7 @@ function pokemonEncounter(pokemon) {
   const locationImg = centerColumn.querySelector('#location-img')
   locationImg.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`
   locationImg.dataset.id = pokemon.id
-  locationImg.dataset.species = capitalName
+  locationImg.dataset.species = capitalize(pokemon.name)
 
   createRenameForm()
 }
