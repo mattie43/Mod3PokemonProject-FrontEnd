@@ -12,7 +12,7 @@ leftColumn.addEventListener('click', e => {
       const pokemonEl = centerColumn.querySelector('#location-img')
       const pokeBallCheck = e.target.id.slice(0,4)
       const chance = Math.floor(Math.random()*10)+1
-      const damage = Math.floor(Math.random()*20)+1
+      const damage = Math.floor(Math.random()*30)+1
       removeItem(e.target)
       
       if(pokeBallCheck == 'poke'){
@@ -41,7 +41,7 @@ leftColumn.addEventListener('click', e => {
     if(leftColumn.querySelector('#hp-p').innerText == '100'){
       centerColumn.querySelector('#message').innerText = 'You are already at full HP!'
     }else{
-      if(e.target.id.slice(0,2) == 'hp'){addHP(20)}else{addHP(40)}
+      if(e.target.id.slice(0,2) == 'hp'){addHP(10)}else{addHP(20)}
       removeItem(e.target)
     }
   }else if(e.target.dataset.id && !centerColumn.querySelector('.game-over')){

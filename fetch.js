@@ -83,8 +83,12 @@ const getPokemonEvolution = (pokeName, pokemonObj, url) => {
   fetch(url)
     .then(resp => resp.json())
     .then(evolutionChain => {
-      if(evolutionChain.chain.evolves_to[0].evolves_to[0] && pokemonObj.name != evolutionChain.chain.evolves_to[0].evolves_to[0].species.name){
+      if(pokemonObj.name == evolutionChain.chain.species.name){
+        getPokemonEvolutionImg(pokeName, pokemonObj, evolutionChain.chain.evolves_to[0].species.name, 'to')
+      }else if(pokemonObj.name == evolutionChain.chain.evolves_to[0].species.name){
         getPokemonEvolutionImg(pokeName, pokemonObj, evolutionChain.chain.evolves_to[0].evolves_to[0].species.name, 'to')
+      }else if(evolutionChain.chain.evolves_to[0].species.name){
+        getPokemonEvolutionImg(pokeName, pokemonObj, evolutionChain.chain.evolves_to[0].species.name, 'from')
       }else{
         getPokemonEvolutionImg(pokeName, pokemonObj, evolutionChain.chain.species.name, 'from')
       }
